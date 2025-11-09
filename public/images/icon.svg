@@ -1,0 +1,40 @@
+<svg viewBox="0 0 800 1000" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="1000" fill="#f5f5f0"/>
+  
+  <!-- Hat -->
+  <ellipse cx="400" cy="320" rx="120" ry="15" fill="#a67c52"/>
+  <rect x="360" y="280" width="80" height="40" rx="8" fill="#a67c52"/>
+  <path d="M 280 320 Q 340 305 400 305 Q 460 305 520 320 L 520 335 Q 460 320 400 320 Q 340 320 280 335 Z" fill="#b8956a"/>
+  <ellipse cx="400" cy="320" rx="140" ry="25" fill="#a67c52"/>
+  
+  <!-- Hair -->
+  <path d="M 320 340 L 310 380 L 340 385 Z" fill="#8b6f47"/>
+  <path d="M 480 340 L 490 380 L 460 385 Z" fill="#8b6f47"/>
+  
+  <!-- Face -->
+  <ellipse cx="400" cy="380" rx="60" ry="40" fill="#d4a574"/>
+  
+  <!-- Lips -->
+  <ellipse cx="400" cy="395" rx="12" ry="6" fill="#c67b5c"/>
+  
+  <!-- Neck -->
+  <path d="M 375 410 L 370 450 L 430 450 L 425 410 Z" fill="#d4a574"/>
+  <path d="M 370 450 L 365 460 L 435 460 L 430 450 Z" fill="#c9976e"/>
+  
+  <!-- Necklace -->
+  <ellipse cx="400" cy="460" rx="35" ry="8" fill="#e8d7c3"/>
+  
+  <!-- Shoulders/Clothing -->
+  <path d="M 340 460 Q 350 480 320 520 L 280 540 L 300 470 Z" fill="#a67c52"/>
+  <path d="M 460 460 Q 450 480 480 520 L 520 540 L 500 470 Z" fill="#a67c52"/>
+  <path d="M 340 460 L 365 460 L 370 520 L 340 540 Z" fill="#b8956a"/>
+  <path d="M 460 460 L 435 460 L 430 520 L 460 540 Z" fill="#b8956a"/>
+  <path d="M 365 460 L 435 460 L 430 540 L 370 540 Z" fill="#c9976e"/>
+  
+  <!-- KAIRA Text -->
+  <text x="400" y="650" font-family="'Didot', 'Bodoni MT', 'Playfair Display', serif" font-size="120" fill="#4a4a4a" text-anchor="middle" letter-spacing="18">KAIRA</text>
+  
+  <!-- Subtitle -->
+  <text x="400" y="710" font-family="'Helvetica Neue', Arial, sans-serif" font-size="32" fill="#6a6a6a" text-anchor="middle" letter-spacing="12">CLOTHES SHOP</text>
+</svg>
