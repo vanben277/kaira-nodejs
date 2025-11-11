@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Danh sách danh mục</title>
+    <%- include('../../partials/admin/Head') %>
+</head>
+
+<body>
+    <div class="container-xxl position-relative bg-white d-flex p-0">
+
+        <%- include('../../partials/admin/Reload') %>
+
+            <%- include('../../partials/admin/Sidebar') %>
+
+                <!-- Content Start -->
+                <div class="content">
+
+                    <%- include('../../partials/admin/Header') %>
+
+                        <div class="container-fluid pt-4 px-4">
+                            <div class="row g-4">
+                                <div class="col-12">
+                                    <div class="bg-light rounded h-100 p-4">
+                                        <div class="d-flex justify-content-between align-items-center mb-4">
+                                            <h6 class="mb-0">Danh sách danh mục</h6>
+                                            <a href="/admin/categories/add" class="btn btn-primary">
+                                                <i class="fa fa-plus me-2"></i>Thêm danh mục
+                                            </a>
+                                        </div>
+
+                                        <% if (categories.length===0) { %>
+                                            <div class="alert alert-info">
+                                                Chưa có danh mục nào. <a href="/admin/categories/add">Thêm danh mục đầu
+                                                    tiên</a>
+                                            </div>
+                                            <% } else { %>
+                                                <div class="table-responsive">
+                                                    <table class="table table-hover">
+                                                        <thead>
+                                                            <tr>
+                                                                <th scope="col">STT</th>
+                                                                <th scope="col">Ảnh</th>
+                                                                <th scope="col">Tên danh mục</th>
+                                                                <th scope="col">Slug</th>
+                                                                <th scope="col">Danh mục cha</th>
+                                                                <th scope="col">Trạng thái</th>
+                                                                <th scope="col">Ngày tạo</th>
+                                                                <th scope="col">Hành động</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <% categories.forEach((category, index)=> { %>
+                                                                <tr>
+                                                                    <th scope="row">
+                                                                        <%= index + 1 %>
+                                                                    </th>
+                                                                    <td>
+                                                                        <% if (category.banner_url) { %>
+                                                                            <img src="<%= category.banner_url %>"
+                                                                                alt="<%= category.name %>"
+                                                                                style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;">
+                                                                            <% } else { %>
+                                                                                <img src="/images/null.png"
+                                                                                    alt="No image"
+                                                                                    style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px;">
+                                                                                <% } %>
+                                                                    </td>
+                                                                    <td>
+                                                                        <strong>
+                                                                            <%= category.name %>
+                                                                        </strong>
+                                                                        <% if (category.description) { %>
+                                                                            <br><small class="text-muted">
+                                                                                <%= category.description.substring(0,
+                                                                                    50) %>...
+                                                                            </small>
+                                                                            <% } %>
+                                                                    </td>
+                                                                    <td><code><%= category.slug %></code></td>
+                                                                    <td>
+                                                                        <% if (category.parent_id) { %>
+                                                                            <span class="badge bg-secondary">
+                                                                                <%= category.parent_id.name %>
+                                                                            </span>
+                                                                            <% } else { %>
+                                                                                <span class="badge bg-primary">Danh mục
+                                                                                    gốc</span>
+                                                                                <% } %>
+                                                                    </td>
+                                                                    <td>
+                                                                        <% if (category.is_active) { %>
+                                                                            <span class="badge bg-success">Hoạt
+                                                                                động</span>
+                                                                            <% } else { %>
+                                                                                <span class="badge bg-danger">Đã
+                                                                                    tắt</span>
+                                                                                <% } %>
+                                                                    </td>
+                                                                    <td>
+                                                                        <small>
+                                                                            <%= moment(category.createdAt).format('DD/MM/YYYY HH:mm') %>
+                                                                        </small>
+                                                                    </td>
+                                                                    <td>
+                                                                        <div class="btn-group" role="group">
+                                                                            <button type="button" 
+                                                                                    class="btn btn-sm btn-info btn-view-category" 
+                                                                                    data-id="<%= category._id %>" 
+                                                                                    title="Xem chi tiết"
+                                                                                    data-bs-toggle="modal" 
+                                                                                    data-bs-target="#categoryDetailModal">
+                                                                                <i class="fa fa-eye"></i>
+                                                                            </button>
+                                                                            <a href="/admin/categories/edit/<%= category._id %>"
+                                                                                class="btn btn-sm btn-warning"
+                                                                                title="Sửa">
+                                                                                <i class="fa fa-edit"></i>
+                                                                            </a>
+
+                                                                            <% if (category.is_active) { %>
+                                                                                <button type="button"
+                                                                                    class="btn btn-sm btn-danger btn-delete"
+                                                                                    data-id="<%= category._id %>"
+                                                                                    title="Xóa">
+                                                                                    <i class="fa fa-trash"></i>
+                                                                                </button>
+                                                                                <% } else { %>
+                                                                                    <button type="button"
+                                                                                        class="btn btn-sm btn-success btn-restore"
+                                                                                        data-id="<%= category._id %>"
+                                                                                        title="Khôi phục">
+                                                                                        <i class="fa fa-undo"></i>
+                                                                                    </button>
+                                                                                    <button type="button"
+                                                                                        class="btn btn-sm btn-dark btn-force-delete"
+                                                                                        data-id="<%= category._id %>"
+                                                                                        title="Xóa vĩnh viễn">
+                                                                                        <i class="fa fa-times"></i>
+                                                                                    </button>
+                                                                                    <% } %>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                                <% }) %>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <%- include('../../partials/admin/Footer') %>
+
+                </div>
+
+                <div class="modal fade" id="categoryDetailModal" tabindex="-1" aria-labelledby="categoryDetailModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="categoryDetailModalLabel">Chi tiết Danh mục: <span id="modalCategoryName"></span></h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-4 text-center">
+                                        <img id="modalCategoryImage" src="" alt="Ảnh danh mục" class="img-thumbnail mb-3" style="max-width: 100%; height: auto; object-fit: cover;">
+                                    </div>
+                                    <div class="col-md-8">
+                                        <dl class="row">
+                                            <dt class="col-sm-4">ID:</dt>
+                                            <dd class="col-sm-8" id="modalCategoryId"></dd>
+
+                                            <dt class="col-sm-4">Tên danh mục:</dt>
+                                            <dd class="col-sm-8" id="modalCategoryNameDetail"></dd>
+
+                                            <dt class="col-sm-4">Slug:</dt>
+                                            <dd class="col-sm-8" id="modalCategorySlug"></dd>
+
+                                            <dt class="col-sm-4">Danh mục cha:</dt>
+                                            <dd class="col-sm-8" id="modalCategoryParent"></dd>
+
+                                            <dt class="col-sm-4">Trạng thái:</dt>
+                                            <dd class="col-sm-8" id="modalCategoryStatus"></dd>
+
+                                            <dt class="col-sm-4">Mô tả:</dt>
+                                            <dd class="col-sm-8" id="modalCategoryDescription"></dd>
+
+                                            <dt class="col-sm-4">Ngày tạo:</dt>
+                                            <dd class="col-sm-8" id="modalCategoryCreatedAt"></dd>
+
+                                            <dt class="col-sm-4">Cập nhật cuối:</dt>
+                                            <dd class="col-sm-8" id="modalCategoryUpdatedAt"></dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <%- include('../../partials/admin/Script') %>
+
+                    <script>
+                        // Xóa tạm
+                        document.querySelectorAll('.btn-delete').forEach(btn => {
+                            btn.addEventListener('click', async function () {
+                                const id = this.dataset.id;
+                                if (confirm('Bạn có chắc muốn xóa danh mục này?')) {
+                                    try {
+                                        const response = await fetch(`/admin/categories/delete/${id}`, {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json'
+                                            }
+                                        });
+                                        const data = await response.json();
+                                        if (data.success) {
+                                            alert(data.message);
+                                            location.reload();
+                                        } else {
+                                            alert(data.message);
+                                        }
+                                    } catch (error) {
+                                        alert('Có lỗi xảy ra: ' + error.message);
+                                    }
+                                }
+                            });
+                        });
+
+                        // Khôi phục
+                        document.querySelectorAll('.btn-restore').forEach(btn => {
+                            btn.addEventListener('click', async function () {
+                                const id = this.dataset.id;
+                                if (confirm('Bạn có chắc muốn khôi phục danh mục này?')) {
+                                    try {
+                                        const response = await fetch(`/admin/categories/restore/${id}`, {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json'
+                                            }
+                                        });
+                                        const data = await response.json();
+                                        if (data.success) {
+                                            alert(data.message);
+                                            location.reload();
+                                        } else {
+                                            alert(data.message);
+                                        }
+                                    } catch (error) {
+                                        alert('Có lỗi xảy ra: ' + error.message);
+                                    }
+                                }
+                            });
+                        });
+
+                        // Xóa vĩnh viễn
+                        document.querySelectorAll('.btn-force-delete').forEach(btn => {
+                            btn.addEventListener('click', async function () {
+                                const id = this.dataset.id;
+                                if (confirm('CẢNH BÁO: Bạn có chắc muốn XÓA VĨNH VIỄN danh mục này? Hành động này KHÔNG THỂ KHÔI PHỤC!')) {
+                                    try {
+                                        const response = await fetch(`/admin/categories/force-delete/${id}`, {
+                                            method: 'DELETE',
+                                            headers: {
+                                                'Content-Type': 'application/json'
+                                            }
+                                        });
+                                        const data = await response.json();
+                                        if (data.success) {
+                                            alert(data.message);
+                                            location.reload();
+                                        } else {
+                                            alert(data.message);
+                                        }
+                                    } catch (error) {
+                                        alert('Có lỗi xảy ra: ' + error.message);
+                                    }
+                                }
+                            });
+                        });
+
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const categoryDetailModal = document.getElementById('categoryDetailModal');
+                            const modalCategoryName = document.getElementById('modalCategoryName');
+                            const modalCategoryNameDetail = document.getElementById('modalCategoryNameDetail');
+                            const modalCategoryId = document.getElementById('modalCategoryId');
+                            const modalCategorySlug = document.getElementById('modalCategorySlug');
+                            const modalCategoryParent = document.getElementById('modalCategoryParent');
+                            const modalCategoryStatus = document.getElementById('modalCategoryStatus');
+                            const modalCategoryDescription = document.getElementById('modalCategoryDescription');
+                            const modalCategoryCreatedAt = document.getElementById('modalCategoryCreatedAt');
+                            const modalCategoryUpdatedAt = document.getElementById('modalCategoryUpdatedAt');
+                            const modalCategoryImage = document.getElementById('modalCategoryImage');
+
+                            categoryDetailModal.addEventListener('show.bs.modal', async function (event) {
+                                const button = event.relatedTarget; 
+                                const categoryId = button.dataset.id; 
+
+                                // Đặt nội dung mặc định trong khi tải
+                                modalCategoryName.textContent = 'Đang tải...';
+                                modalCategoryNameDetail.textContent = 'Đang tải...';
+
+                                try {
+                                    const response = await fetch(`/admin/categories/view/${categoryId}`);
+                                    const result = await response.json();
+
+                                    if (result.success) {
+                                        const category = result.category;
+
+                                        modalCategoryName.textContent = category.name;
+                                        modalCategoryNameDetail.textContent = category.name;
+                                        modalCategoryId.textContent = category._id;
+                                        modalCategorySlug.textContent = category.slug;
+                                        modalCategoryParent.textContent = category.parent_id;
+                                        modalCategoryDescription.innerHTML = category.description || 'Không có mô tả'; // Sử dụng innerHTML vì description có thể chứa <br>
+                                        modalCategoryCreatedAt.textContent = new Date(category.createdAt).toLocaleString('vi-VN');
+                                        modalCategoryUpdatedAt.textContent = new Date(category.updatedAt).toLocaleString('vi-VN');
+
+                                        modalCategoryStatus.innerHTML = category.is_active 
+                                            ? '<span class="badge bg-success">Hoạt động</span>' 
+                                            : '<span class="badge bg-danger">Đã tắt</span>';
+
+                                        modalCategoryImage.src = category.banner_url || '/images/null.png';
+                                        modalCategoryImage.alt = category.name;
+
+                                    } else {
+                                        alert('Lỗi: ' + result.message);
+                                        const modal = bootstrap.Modal.getInstance(categoryDetailModal);
+                                        modal.hide();
+                                    }
+                                } catch (error) {
+                                    console.error('Lỗi khi lấy dữ liệu danh mục:', error);
+                                    alert('Không thể tải chi tiết danh mục. Vui lòng thử lại.');
+                                    const modal = bootstrap.Modal.getInstance(categoryDetailModal);
+                                    modal.hide();
+                                }
+                            });
+                        });
+                    </script>
+</body>
+
+</html>

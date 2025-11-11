@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Thêm danh mục</title>
+    <%- include('../../partials/admin/Head') %>
+</head>
+
+<body>
+    <div class="container-xxl position-relative bg-white d-flex p-0">
+
+        <%- include('../../partials/admin/Reload') %>
+
+            <%- include('../../partials/admin/Sidebar') %>
+
+                <!-- Content Start -->
+                <div class="content">
+
+                    <%- include('../../partials/admin/Header') %>
+
+                        <div class="container-fluid pt-4 px-4">
+                            <div class="row g-4">
+                                <div class="col-sm-12 col-xl-12">
+                                    <div class="bg-light rounded h-100 p-4">
+                                        <h6 class="mb-4">Thêm Danh Mục Mới</h6>
+
+                                        <form action="/admin/categories/create" method="POST"
+                                            enctype="multipart/form-data">
+
+                                            <!-- Tên danh mục -->
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" id="name" name="name"
+                                                    placeholder="Tên danh mục" required minlength="3" maxlength="50">
+                                                <label for="name">Tên danh mục *</label>
+                                            </div>
+
+                                            <!-- Slug -->
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" id="slug" name="slug"
+                                                    placeholder="slug-danh-muc">
+                                                <label for="slug">Slug (URL thân thiện)</label>
+                                                <small class="text-muted">Để trống để tự động tạo từ tên danh
+                                                    mục</small>
+                                            </div>
+
+                                            <!-- Danh mục cha -->
+                                            <div class="form-floating mb-3">
+                                                <select class="form-select" id="parent_id" name="parent_id">
+                                                    <option value="">-- Danh mục gốc (không có cha) --</option>
+                                                    <% if (typeof categories !=='undefined' && categories.length> 0) {
+                                                        %>
+                                                        <% categories.forEach(category=> { %>
+                                                            <option value="<%= category._id %>">
+                                                                <%= category.name %>
+                                                            </option>
+                                                            <% }) %>
+                                                                <% } %>
+                                                </select>
+                                                <label for="parent_id">Danh mục cha</label>
+                                            </div>
+
+                                            <!-- Upload Banner -->
+                                            <div class="mb-3">
+                                                <label for="banner_url" class="form-label">Ảnh</label>
+                                                <input type="file" class="form-control" id="banner_url"
+                                                    name="banner_url" accept="image/*">
+                                            </div>
+
+                                            <!-- Mô tả -->
+                                            <div class="form-floating mb-3">
+                                                <textarea class="form-control" placeholder="Mô tả danh mục"
+                                                    id="description" name="description" style="height: 150px;"
+                                                    maxlength="500"></textarea>
+                                                <label for="description">Mô tả</label>
+                                            </div>
+
+                                            <!-- Trạng thái -->
+                                            <div class="form-check form-switch mb-4">
+                                                <input class="form-check-input" type="checkbox" id="is_active"
+                                                    name="is_active" checked>
+                                                <label class="form-check-label" for="is_active">
+                                                    Kích hoạt danh mục
+                                                </label>
+                                            </div>
+
+                                            <!-- Buttons -->
+                                            <div class="d-flex gap-2">
+                                                <button type="submit" class="btn btn-primary">
+                                                    <i class="fa fa-save me-2"></i>Lưu danh mục
+                                                </button>
+                                                <a href="/admin/categories" class="btn btn-secondary">
+                                                    <i class="fa fa-times me-2"></i>Hủy
+                                                </a>
+                                            </div>
+
+                                        </form>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <%- include('../../partials/admin/Footer') %>
+
+                </div>
+
+                <%- include('../../partials/admin/Script') %>
+
+                    <!-- Auto generate slug từ name -->
+                    <script>
+                        document.getElementById('name').addEventListener('input', function (e) {
+                            const slug = document.getElementById('slug');
+                            if (!slug.value || slug.dataset.autoGenerated) {
+                                const generatedSlug = e.target.value
+                                    .toLowerCase()
+                                    .normalize('NFD')
+                                    .replace(/[\u0300-\u036f]/g, '')
+                                    .replace(/đ/g, 'd')
+                                    .replace(/[^a-z0-9\s-]/g, '')
+                                    .replace(/\s+/g, '-')
+                                    .replace(/-+/g, '-')
+                                    .trim();
+                                slug.value = generatedSlug;
+                                slug.dataset.autoGenerated = 'true';
+                            }
+                        });
+
+                        document.getElementById('slug').addEventListener('input', function () {
+                            if (this.value) {
+                                delete this.dataset.autoGenerated;
+                            }
+                        });
+                    </script>
+</body>
+
+</html>

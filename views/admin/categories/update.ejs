@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Sửa danh mục</title>
+    <%- include('../../partials/admin/Head') %>
+</head>
+
+<body>
+    <div class="container-xxl position-relative bg-white d-flex p-0">
+
+        <%- include('../../partials/admin/Reload') %>
+
+        <%- include('../../partials/admin/Sidebar') %>
+
+        <!-- Content Start -->
+        <div class="content">
+
+            <%- include('../../partials/admin/Header') %>
+
+            <div class="container-fluid pt-4 px-4">
+                <div class="row g-4">
+                    <div class="col-sm-12 col-xl-12">
+                        <div class="bg-light rounded h-100 p-4">
+                            <h6 class="mb-4">Sửa Danh Mục: <%= category.name %></h6>
+                            
+                            <form action="/admin/categories/update/<%= category._id %>" method="POST" enctype="multipart/form-data">
+                                
+                                <!-- Tên danh mục -->
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="name" name="name"
+                                        placeholder="Tên danh mục" required minlength="3" maxlength="50"
+                                        value="<%= category.name %>">
+                                    <label for="name">Tên danh mục *</label>
+                                </div>
+
+                                <!-- Slug -->
+                                <div class="form-floating mb-3">
+                                    <input type="text" class="form-control" id="slug" name="slug"
+                                        placeholder="slug-danh-muc" value="<%= category.slug %>">
+                                    <label for="slug">Slug (URL thân thiện)</label>
+                                    <small class="text-muted">Để trống để tự động tạo từ tên danh mục</small>
+                                </div>
+
+                                <!-- Danh mục cha -->
+                                <div class="form-floating mb-3">
+                                    <select class="form-select" id="parent_id" name="parent_id">
+                                        <option value="">-- Danh mục gốc (không có cha) --</option>
+                                        <% if (typeof categories !== 'undefined' && categories.length > 0) { %>
+                                            <% categories.forEach(cat => { %>
+                                                <option value="<%= cat._id %>" 
+                                                    <%= category.parent_id && category.parent_id._id.toString() === cat._id.toString() ? 'selected' : '' %>>
+                                                    <%= cat.name %>
+                                                </option>
+                                            <% }) %>
+                                        <% } %>
+                                    </select>
+                                    <label for="parent_id">Danh mục cha</label>
+                                </div>
+
+                                <!-- Ảnh hiện tại -->
+                                <% if (category.banner_url) { %>
+                                    <div class="mb-3">
+                                        <label class="form-label">Ảnh hiện tại:</label>
+                                        <div class="position-relative d-inline-block">
+                                            <img src="<%= category.banner_url %>" 
+                                                 alt="<%= category.name %>" 
+                                                 class="img-thumbnail"
+                                                 style="max-width: 200px; max-height: 200px; object-fit: cover;">
+                                            <button type="button" 
+                                                    class="btn btn-sm btn-danger position-absolute top-0 end-0 m-1"
+                                                    id="btnRemoveImage"
+                                                    title="Xóa ảnh">
+                                                <i class="fa fa-times"></i>
+                                            </button>
+                                        </div>
+                                        <input type="hidden" name="remove_image" id="remove_image" value="0">
+                                    </div>
+                                <% } %>
+
+                                <div class="mb-3">
+                                    <label for="banner_url" class="form-label">
+                                        <%= category.banner_url ? 'Thay đổi ảnh' : '' %>
+                                    </label>
+                                    <input type="file" class="form-control" id="banner_url" name="banner_url"
+                                        accept="image/*">
+                                    <small class="text-muted">Chọn file mới để thay đổi ảnh banner</small>
+                                </div>
+
+                                <div class="mb-3" id="preview-container" style="display: none;">
+                                    <label class="form-label">Xem trước ảnh mới:</label>
+                                    <div>
+                                        <img id="preview-image" src="" alt="Preview" 
+                                             class="img-thumbnail"
+                                             style="max-width: 200px; max-height: 200px; object-fit: cover;">
+                                    </div>
+                                </div>
+
+                                <div class="form-floating mb-3">
+                                    <textarea class="form-control" placeholder="Mô tả danh mục"
+                                        id="description" name="description" style="height: 150px;" 
+                                        maxlength="500"><%= category.description || '' %></textarea>
+                                    <label for="description">Mô tả</label>
+                                </div>
+
+                                <div class="form-check form-switch mb-4">
+                                    <input class="form-check-input" type="checkbox" id="is_active" 
+                                        name="is_active" <%= category.is_active ? 'checked' : '' %>>
+                                    <label class="form-check-label" for="is_active">
+                                        Kích hoạt danh mục
+                                    </label>
+                                </div>
+
+                                <div class="alert alert-info">
+                                    <small>
+                                        <strong>Ngày tạo:</strong> <%= new Date(category.createdAt).toLocaleString('vi-VN') %><br>
+                                        <strong>Cập nhật lần cuối:</strong> <%= new Date(category.updatedAt).toLocaleString('vi-VN') %>
+                                    </small>
+                                </div>
+
+                                <div class="d-flex gap-2">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fa fa-save me-2"></i>Cập nhật
+                                    </button>
+                                    <a href="/admin/categories" class="btn btn-secondary">
+                                        <i class="fa fa-times me-2"></i>Hủy
+                                    </a>
+                                </div>
+
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <%- include('../../partials/admin/Footer') %>
+
+        </div>
+
+        <%- include('../../partials/admin/Script') %>
+        
+        <script>
+            // Auto generate slug từ name
+            const nameInput = document.getElementById('name');
+            const slugInput = document.getElementById('slug');
+            const originalSlug = slugInput.value;
+
+            nameInput.addEventListener('input', function(e) {
+                if (!slugInput.value || slugInput.value === originalSlug || slugInput.dataset.autoGenerated) {
+                    const generatedSlug = e.target.value
+                        .toLowerCase()
+                        .normalize('NFD')
+                        .replace(/[\u0300-\u036f]/g, '')
+                        .replace(/đ/g, 'd')
+                        .replace(/Đ/g, 'd')
+                        .replace(/[^a-z0-9\s-]/g, '')
+                        .replace(/\s+/g, '-')
+                        .replace(/-+/g, '-')
+                        .trim();
+                    slugInput.value = generatedSlug;
+                    slugInput.dataset.autoGenerated = 'true';
+                }
+            });
+
+            slugInput.addEventListener('input', function() {
+                if (this.value && this.value !== originalSlug) {
+                    delete this.dataset.autoGenerated;
+                }
+            });
+
+            // Preview ảnh mới khi chọn file
+            document.getElementById('banner_url').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        const previewContainer = document.getElementById('preview-container');
+                        const previewImage = document.getElementById('preview-image');
+                        previewImage.src = event.target.result;
+                        previewContainer.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    document.getElementById('preview-container').style.display = 'none';
+                }
+            });
+
+            // Xóa ảnh hiện tại
+            const btnRemoveImage = document.getElementById('btnRemoveImage');
+            if (btnRemoveImage) {
+                btnRemoveImage.addEventListener('click', function() {
+                    if (confirm('Bạn có chắc muốn xóa ảnh này?')) {
+                        document.getElementById('remove_image').value = '1';
+                        this.closest('.position-relative').style.display = 'none';
+                        alert('Ảnh sẽ được xóa khi bạn lưu thay đổi');
+                    }
+                });
+            }
+        </script>
+</body>
+
+</html>
