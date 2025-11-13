@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <title>Đăng ký thành công</title>
+    <%- include('../partials/user/Head') %>
+  </head>
+  <body
+    class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen flex items-center justify-center py-12 px-4"
+  >
+    <div class="max-w-md w-full">
+      <div class="bg-white rounded-2xl shadow-xl p-8 text-center">
+        <div class="mb-6">
+          <svg
+            class="w-20 h-20 mx-auto text-blue-500"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8m-9 13V3"
+            ></path>
+          </svg>
+        </div>
+        <h2 class="text-2xl font-bold text-gray-900 mb-4">
+          Kiểm tra email của bạn!
+        </h2>
+        <p class="text-gray-600 mb-6">
+          Chúng tôi đã gửi một email xác thực đến địa chỉ của bạn. Vui lòng kiểm
+          tra hộp thư đến (và cả thư mục spam/junk) để hoàn tất việc đăng ký.
+        </p>
+        <a
+          href="/auth/signin"
+          class="inline-block px-6 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition"
+        >
+          Đã xác thực? Đăng nhập ngay
+        </a>
+      </div>
+    </div>
+    <%- include('../partials/user/Script') %>
+  </body>
+</html>

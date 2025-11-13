@@ -105,7 +105,7 @@
                                                                     <td>
                                                                         <div class="btn-group" role="group">
                                                                             <button type="button" 
-                                                                                    class="btn btn-sm btn-info btn-view-category" 
+                                                                                    class="btn btn-sm btn-info btn-view-category btn-mr-bdr" 
                                                                                     data-id="<%= category._id %>" 
                                                                                     title="Xem chi tiết"
                                                                                     data-bs-toggle="modal" 
@@ -113,27 +113,27 @@
                                                                                 <i class="fa fa-eye"></i>
                                                                             </button>
                                                                             <a href="/admin/categories/edit/<%= category._id %>"
-                                                                                class="btn btn-sm btn-warning"
+                                                                                class="btn btn-sm btn-warning btn-mr-bdr"
                                                                                 title="Sửa">
                                                                                 <i class="fa fa-edit"></i>
                                                                             </a>
 
                                                                             <% if (category.is_active) { %>
                                                                                 <button type="button"
-                                                                                    class="btn btn-sm btn-danger btn-delete"
+                                                                                    class="btn btn-sm btn-danger btn-delete btn-mr-bdr"
                                                                                     data-id="<%= category._id %>"
                                                                                     title="Xóa">
                                                                                     <i class="fa fa-trash"></i>
                                                                                 </button>
                                                                                 <% } else { %>
                                                                                     <button type="button"
-                                                                                        class="btn btn-sm btn-success btn-restore"
+                                                                                        class="btn btn-sm btn-success btn-restore btn-mr-bdr"
                                                                                         data-id="<%= category._id %>"
                                                                                         title="Khôi phục">
                                                                                         <i class="fa fa-undo"></i>
                                                                                     </button>
                                                                                     <button type="button"
-                                                                                        class="btn btn-sm btn-dark btn-force-delete"
+                                                                                        class="btn btn-sm btn-dark btn-force-delete btn-mr-bdr"
                                                                                         data-id="<%= category._id %>"
                                                                                         title="Xóa vĩnh viễn">
                                                                                         <i class="fa fa-times"></i>

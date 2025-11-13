@@ -19,8 +19,8 @@ app.use(session({
     secret: 'my-news-app-secret-key-2024',
     resave: false,
     saveUninitialized: false,
-    cookie: { 
-        maxAge: 24 * 60 * 60 * 1000, 
+    cookie: {
+        maxAge: 24 * 60 * 60 * 1000,
         httpOnly: true,
         secure: false // Để true nếu dùng HTTPS
     }
@@ -43,11 +43,13 @@ app.set('views', path.join(__dirname, 'views'));
 
 const userRoutes = require('./routes/user');
 const adminRoutes = require('./routes/admin');
+const authRoutes = require('./routes/auth');
 
 app.use('/', userRoutes);
 app.use('/admin', adminRoutes);
+app.use('/auth', authRoutes);
 
 
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+    console.log(`Server is running on http://localhost:${PORT}`);
 });

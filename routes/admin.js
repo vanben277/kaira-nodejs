@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const CategoriesController = require('../controllers/CategoriesController');
 const upload = require('../config/multerCategories');
+const authMiddleware = require('../middleware/auth');
+
+router.use(authMiddleware.isAdmin);
 
 // -----------------------------------dashboard
 router.get('/', (req, res) => {

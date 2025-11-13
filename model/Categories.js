@@ -16,7 +16,7 @@ const categorySchema = new mongoose.Schema({
     parent_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category',
-        default: null 
+        default: null
     },
     slug: {
         type: String,
@@ -45,7 +45,7 @@ categorySchema.virtual('children', {
 });
 
 // Virtual để kiểm tra có phải danh mục cha không
-categorySchema.virtual('isParent').get(function() {
+categorySchema.virtual('isParent').get(function () {
     return this.parent_id === null;
 });
 
@@ -54,6 +54,5 @@ categorySchema.set('toObject', { virtuals: true });
 
 // Index để tìm kiếm nhanh
 categorySchema.index({ parent_id: 1 });
-categorySchema.index({ slug: 1 });
 
 module.exports = mongoose.model('Category', categorySchema);

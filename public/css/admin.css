@@ -64,6 +64,11 @@
     border-radius: 50px;
 }
 
+.btn-mr-bdr {
+    margin: 0 4px !important;
+    border-radius: 4px !important;
+}
+
 
 /*** Layout ***/
 .sidebar {
