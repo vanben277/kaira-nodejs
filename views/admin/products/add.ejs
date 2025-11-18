@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Thêm sản phẩm</title>
+    <%- include('../../partials/admin/Head') %>
+</head>
+
+<body>
+    <div class="container-xxl position-relative bg-white d-flex p-0">
+
+        <%- include('../../partials/admin/Reload') %>
+
+            <%- include('../../partials/admin/Sidebar') %>
+
+                <div class="content">
+
+                    <%- include('../../partials/admin/Header') %>
+
+                        <div class="container-fluid pt-4 px-4">
+                            <div class="row g-4">
+                                <div class="col-sm-12 col-xl-12">
+                                    <div class="bg-light rounded h-100 p-4">
+                                        <h6 class="mb-4">Thêm Sản Phẩm Mới</h6>
+
+                                        <form action="/admin/products/create" method="POST" enctype="multipart/form-data" id="productForm">
+
+                                            <h6 class="mb-3 text-primary">Thông tin cơ bản</h6>
+                                            
+                                            <!-- Tên sản phẩm -->
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" id="name" name="name" placeholder="Tên sản phẩm" required>
+                                                <label for="name">Tên sản phẩm *</label>
+                                            </div>
+
+                                            <!-- Slug -->
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" id="slug" name="slug" placeholder="slug-san-pham">
+                                                <label for="slug">Slug (URL thân thiện)</label>
+                                                <small class="text-muted">Để trống để tự động tạo từ tên sản phẩm</small>
+                                            </div>
+
+                                            <!-- Danh mục -->
+                                            <div class="form-floating mb-3">
+                                                <select class="form-select" id="category_id" name="category_id" required>
+                                                    <option value="">-- Chọn danh mục --</option>
+                                                    <% if (typeof categories !== 'undefined' && categories.length > 0) { %>
+                                                        <% categories.forEach(category => { %>
+                                                            <option value="<%= category._id %>"><%= category.name %></option>
+                                                        <% }) %>
+                                                    <% } %>
+                                                </select>
+                                                <label for="category_id">Danh mục *</label>
+                                            </div>
+
+                                            <!-- Mô tả -->
+                                            <div class="form-floating mb-3">
+                                                <textarea class="form-control" placeholder="Mô tả sản phẩm" id="description" name="description" style="height: 150px;"></textarea>
+                                                <label for="description">Mô tả</label>
+                                            </div>
+
+                                            <!-- Upload ảnh thumbnail -->
+                                            <div class="mb-3">
+                                                <label for="thumbnail" class="form-label">Ảnh đại diện *</label>
+                                                <input type="file" class="form-control" id="thumbnail" name="thumbnail" accept="image/*" required>
+                                                <div id="thumbnailPreview" class="mt-2"></div>
+                                            </div>
+
+                                            <hr class="my-4">
+
+                                            <!-- LOẠI SẢN PHẨM -->
+                                            <h6 class="mb-3 text-primary">Loại sản phẩm</h6>
+                                            
+                                            <div class="form-check form-switch mb-4">
+                                                <input class="form-check-input" type="checkbox" id="has_variants" name="has_variants">
+                                                <label class="form-check-label" for="has_variants">
+                                                    <strong>Sản phẩm có biến thể</strong> (màu sắc, kích thước)
+                                                </label>
+                                            </div>
+
+                                            <!-- PHẦN SẢN PHẨM ĐơN GIẢN (KHÔNG BIẾN THỂ) -->
+                                            <div id="simpleProductSection">
+                                                <h6 class="mb-3 text-success">Thông tin sản phẩm đơn giản</h6>
+
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="form-floating mb-3">
+                                                            <input type="number" class="form-control" id="price" name="price" placeholder="Giá" min="0" step="1000">
+                                                            <label for="price">Giá (VNĐ) *</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="form-floating mb-3">
+                                                            <input type="number" class="form-control" id="stock" name="stock" placeholder="Tồn kho" min="0" value="0">
+                                                            <label for="stock">Tồn kho *</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="form-floating mb-3">
+                                                            <input type="text" class="form-control" id="sku" name="sku" placeholder="SKU">
+                                                            <label for="sku">Mã SKU</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Upload nhiều ảnh -->
+                                                <div class="mb-3">
+                                                    <label for="images" class="form-label">Ảnh sản phẩm (nhiều ảnh)</label>
+                                                    <input type="file" class="form-control" id="images" name="images" accept="image/*" multiple>
+                                                    <div id="imagesPreview" class="mt-2"></div>
+                                                </div>
+                                            </div>
+
+                                            <!-- PHẦN SẢN PHẨM CÓ BIẾN THỂ -->
+                                            <div id="variantProductSection" style="display: none;">
+                                                <h6 class="mb-3 text-warning">Biến thể sản phẩm</h6>
+                                                
+                                                <div id="variantsContainer"></div>
+
+                                                <button type="button" class="btn btn-success mb-3" id="addVariantBtn">
+                                                    <i class="fa fa-plus me-2"></i>Thêm biến thể màu sắc
+                                                </button>
+                                            </div>
+
+                                            <hr class="my-4">
+
+                                            <!-- CÁC THIẾT LẬP KHÁC -->
+                                            <h6 class="mb-3 text-primary">Thiết lập khác</h6>
+
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="form-check form-switch mb-3">
+                                                        <input class="form-check-input" type="checkbox" id="is_active" name="is_active" checked>
+                                                        <label class="form-check-label" for="is_active">
+                                                            Kích hoạt sản phẩm
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Buttons -->
+                                            <div class="d-flex gap-2">
+                                                <button type="submit" class="btn btn-primary">
+                                                    <i class="fa fa-save me-2"></i>Lưu sản phẩm
+                                                </button>
+                                                <a href="/admin/products" class="btn btn-secondary">
+                                                    <i class="fa fa-times me-2"></i>Hủy
+                                                </a>
+                                            </div>
+
+                                        </form>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <%- include('../../partials/admin/Footer') %>
+
+                </div>
+
+                <%- include('../../partials/admin/Script') %>
+
+                <script>
+                    let variantIndex = 0;
+
+                    // Toggle giữa sản phẩm đơn giản và có biến thể
+                    document.getElementById('has_variants').addEventListener('change', function() {
+                        const simpleSection = document.getElementById('simpleProductSection');
+                        const variantSection = document.getElementById('variantProductSection');
+                        
+                        if (this.checked) {
+                            simpleSection.style.display = 'none';
+                            variantSection.style.display = 'block';
+                            // Bỏ required cho sản phẩm đơn giản
+                            document.getElementById('price').removeAttribute('required');
+                            document.getElementById('stock').removeAttribute('required');
+                        } else {
+                            simpleSection.style.display = 'block';
+                            variantSection.style.display = 'none';
+                            // Thêm required cho sản phẩm đơn giản
+                            document.getElementById('price').setAttribute('required', 'required');
+                            document.getElementById('stock').setAttribute('required', 'required');
+                        }
+                    });
+
+                    // Thêm biến thể mới
+                    document.getElementById('addVariantBtn').addEventListener('click', function() {
+                        const container = document.getElementById('variantsContainer');
+                        const variantHtml = `
+                            <div class="card mb-3 variant-item" data-variant-index="${variantIndex}">
+                                <div class="card-header bg-warning text-white d-flex justify-content-between align-items-center">
+                                    <span>Biến thể #${variantIndex + 1}</span>
+                                    <button type="button" class="btn btn-sm btn-danger remove-variant-btn" onclick="removeVariant(${variantIndex})">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" name="variants[${variantIndex}][color]" placeholder="Màu sắc" required>
+                                                <label>Màu sắc *</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-floating mb-3">
+                                                <input type="color" class="form-control" name="variants[${variantIndex}][color_code]" value="#000000">
+                                                <label>Mã màu</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label class="form-label">Ảnh màu này (nhiều ảnh)</label>
+                                                <input type="file" class="form-control variant-images" data-variant-index="${variantIndex}" name="variants[${variantIndex}][images]" accept="image/*" multiple>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <h6 class="text-info mb-2">Kích thước & Giá</h6>
+                                    <div class="sizes-container" id="sizesContainer${variantIndex}"></div>
+                                    
+                                    <button type="button" class="btn btn-sm btn-info" onclick="addSize(${variantIndex})">
+                                        <i class="fa fa-plus me-1"></i>Thêm size
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                        container.insertAdjacentHTML('beforeend', variantHtml);
+                        variantIndex++;
+                    });
+
+                    // Thêm size cho biến thể
+                    function addSize(variantIdx) {
+                        const container = document.getElementById(`sizesContainer${variantIdx}`);
+                        const sizeIdx = container.children.length;
+                        const sizeHtml = `
+                            <div class="card mb-2 size-item">
+                                <div class="card-body">
+                                    <div class="row align-items-end">
+                                        <div class="col-md-2">
+                                            <div class="form-floating">
+                                                <input type="text" class="form-control" name="variants[${variantIdx}][sizes][${sizeIdx}][size]" placeholder="Size" required>
+                                                <label>Size *</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-floating">
+                                                <input type="number" class="form-control" name="variants[${variantIdx}][sizes][${sizeIdx}][price]" placeholder="Giá" min="0" step="1000" required>
+                                                <label>Giá (VNĐ) *</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-floating">
+                                                <input type="number" class="form-control" name="variants[${variantIdx}][sizes][${sizeIdx}][stock]" placeholder="Tồn kho" min="0" value="0" required>
+                                                <label>Tồn kho *</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-floating">
+                                                <input type="text" class="form-control" name="variants[${variantIdx}][sizes][${sizeIdx}][sku]" placeholder="SKU">
+                                                <label>SKU</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="button" class="btn btn-danger btn-sm w-100" onclick="this.closest('.size-item').remove()">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        container.insertAdjacentHTML('beforeend', sizeHtml);
+                    }
+
+                    // Xóa biến thể
+                    function removeVariant(index) {
+                        const variant = document.querySelector(`[data-variant-index="${index}"]`);
+                        if (variant) {
+                            variant.remove();
+                        }
+                    }
+
+                    // Preview ảnh thumbnail
+                    document.getElementById('thumbnail').addEventListener('change', function(e) {
+                        const preview = document.getElementById('thumbnailPreview');
+                        preview.innerHTML = '';
+                        if (e.target.files[0]) {
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                preview.innerHTML = `<img src="${e.target.result}" style="max-width: 150px; max-height: 150px; border-radius: 5px;" class="border">`;
+                            }
+                            reader.readAsDataURL(e.target.files[0]);
+                        }
+                    });
+
+                    // Preview nhiều ảnh
+                    document.getElementById('images').addEventListener('change', function(e) {
+                        const preview = document.getElementById('imagesPreview');
+                        preview.innerHTML = '';
+                        Array.from(e.target.files).forEach(file => {
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                const img = document.createElement('img');
+                                img.src = e.target.result;
+                                img.style.cssText = 'max-width: 100px; max-height: 100px; margin: 5px; border-radius: 5px;';
+                                img.className = 'border';
+                                preview.appendChild(img);
+                            }
+                            reader.readAsDataURL(file);
+                        });
+                    });
+
+                    // Validate form trước khi submit
+                    document.getElementById('productForm').addEventListener('submit', function(e) {
+                        const hasVariants = document.getElementById('has_variants').checked;
+                        
+                        if (hasVariants) {
+                            const variants = document.querySelectorAll('.variant-item');
+                            if (variants.length === 0) {
+                                e.preventDefault();
+                                alert('Vui lòng thêm ít nhất 1 biến thể!');
+                                return false;
+                            }
+                        }
+                    });
+                </script>
+</body>
+
+</html>

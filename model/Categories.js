@@ -4,9 +4,7 @@ const categorySchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
-        trim: true,
-        minlength: 3,
-        maxlength: 50
+        trim: true
     },
     banner_url: {
         type: String,

@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Danh sách sản phẩm</title>
+    <%- include('../../partials/admin/Head') %>
+    <style>
+        /* Tùy chỉnh nhỏ cho ảnh trong modal */
+        .modal-body img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .variant-image-thumbnail {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #eee;
+        }
+        .product-images-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .product-images-grid img {
+            width: 100%;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 1px solid #eee;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-xxl position-relative bg-white d-flex p-0">
+
+        <%- include('../../partials/admin/Reload') %>
+
+            <%- include('../../partials/admin/Sidebar') %>
+
+                <div class="content">
+
+                    <%- include('../../partials/admin/Header') %>
+
+                        <div class="container-fluid pt-4 px-4">
+                            <div class="row g-4">
+                                <div class="col-12">
+                                    <div class="bg-light rounded h-100 p-4">
+                                        <div class="d-flex justify-content-between align-items-center mb-4">
+                                            <h6 class="mb-0">Danh sách sản phẩm</h6>
+                                            <a href="/admin/products/add" class="btn btn-primary">
+                                                <i class="fa fa-plus me-2"></i>Thêm sản phẩm
+                                            </a>
+                                        </div>
+
+                                        <!-- Hiển thị số item mỗi trang -->
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <div class="d-flex align-items-center">
+                                                <label class="me-2">Hiển thị:</label>
+                                                <select class="form-select form-select-sm" style="width: auto;" id="limitSelect">
+                                                    <option value="5" <%= pagination.limit === 5 ? 'selected' : '' %>>5</option>
+                                                    <option value="10" <%= pagination.limit === 10 ? 'selected' : '' %>>10</option>
+                                                    <option value="25" <%= pagination.limit === 25 ? 'selected' : '' %>>25</option>
+                                                    <option value="50" <%= pagination.limit === 50 ? 'selected' : '' %>>50</option>
+                                                    <option value="100" <%= pagination.limit === 100 ? 'selected' : '' %>>100</option>
+                                                </select>
+                                                <span class="ms-2 text-muted">sản phẩm mỗi trang</span>
+                                            </div>
+                                            <div class="text-muted">
+                                                Hiển thị <%= (pagination.page - 1) * pagination.limit + 1 %> - 
+                                                <%= Math.min(pagination.page * pagination.limit, pagination.totalProducts) %> 
+                                                trong tổng số <%= pagination.totalProducts %> sản phẩm
+                                            </div>
+                                        </div>
+
+                                        <% if (products.length === 0) { %>
+                                            <div class="alert alert-info">
+                                                Chưa có sản phẩm nào. <a href="/admin/products/add">Thêm sản phẩm đầu tiên</a>
+                                            </div>
+                                        <% } else { %>
+                                            <div class="table-responsive">
+                                                <table class="table table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <th scope="col">STT</th>
+                                                            <th scope="col">Ảnh</th>
+                                                            <th scope="col">Tên sản phẩm</th>
+                                                            <th scope="col">Danh mục</th>
+                                                            <th scope="col">Loại</th>
+                                                            <th scope="col">Giá</th>
+                                                            <th scope="col">Tồn kho</th>
+                                                            <th scope="col">Trạng thái</th>
+                                                            <th scope="col">Ngày tạo</th>
+                                                            <th scope="col">Hành động</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <% products.forEach((product, index) => { %>
+                                                            <tr>
+                                                                <th scope="row">
+                                                                    <%= (pagination.page - 1) * pagination.limit + index + 1 %>
+                                                                </th>
+                                                                <td>
+                                                                    <% if (product.thumbnail) { %>
+                                                                        <img src="<%= product.thumbnail %>"
+                                                                            alt="<%= product.name %>"
+                                                                            style="width: 60px; height: 60px; object-fit: cover; border-radius: 5px;">
+                                                                    <% } else { %>
+                                                                        <img src="/images/null.png"
+                                                                            alt="No image"
+                                                                            style="width: 60px; height: 60px; object-fit: cover; border-radius: 5px;">
+                                                                    <% } %>
+                                                                </td>
+                                                                <td>
+                                                                    <strong><%= product.name %></strong>
+                                                                    <% if (product.description) { %>
+                                                                        <br><small class="text-muted">
+                                                                            <%= product.description.substring(0, 50) %>...
+                                                                        </small>
+                                                                    <% } %>
+                                                                    <br><code class="small"><%= product.slug %></code>
+                                                                </td>
+                                                                <td>
+                                                                    <% if (product.category_id) { %>
+                                                                        <span class="badge bg-info">
+                                                                            <%= product.category_id.name %>
+                                                                        </span>
+                                                                    <% } else { %>
+                                                                        <span class="badge bg-secondary">Chưa phân loại</span>
+                                                                    <% } %>
+                                                                </td>
+                                                                <td>
+                                                                    <% if (product.has_variants) { %>
+                                                                        <span class="badge bg-warning">
+                                                                            <i class="fa fa-tags me-1"></i>Có biến thể
+                                                                        </span>
+                                                                        <br>
+                                                                        <small class="text-muted">
+                                                                            <%= product.variants.length %> màu
+                                                                        </small>
+                                                                    <% } else { %>
+                                                                        <span class="badge bg-secondary">
+                                                                            <i class="fa fa-cube me-1"></i>Đơn giản
+                                                                        </span>
+                                                                    <% } %>
+                                                                </td>
+                                                                <td>
+                                                                    <% if (product.has_variants) { %>
+                                                                        <% 
+                                                                        let minPrice = Infinity;
+                                                                        let maxPrice = 0;
+                                                                        product.variants.forEach(variant => {
+                                                                            variant.sizes.forEach(size => {
+                                                                                if (size.price < minPrice) minPrice = size.price;
+                                                                                if (size.price > maxPrice) maxPrice = size.price;
+                                                                            });
+                                                                        });
+                                                                        %>
+                                                                        <strong class="text-primary">
+                                                                            <%= minPrice.toLocaleString('vi-VN') %>đ
+                                                                        </strong>
+                                                                        <% if (minPrice !== maxPrice) { %>
+                                                                            <br><small class="text-muted">
+                                                                                ~ <%= maxPrice.toLocaleString('vi-VN') %>đ
+                                                                            </small>
+                                                                        <% } %>
+                                                                    <% } else { %>
+                                                                        <strong class="text-primary">
+                                                                            <%= product.price.toLocaleString('vi-VN') %>đ
+                                                                        </strong>
+                                                                    <% } %>
+                                                                </td>
+                                                                <td>
+                                                                    <% if (product.has_variants) { %>
+                                                                        <% 
+                                                                        let totalStock = 0;
+                                                                        product.variants.forEach(variant => {
+                                                                            variant.sizes.forEach(size => {
+                                                                                totalStock += size.stock;
+                                                                            });
+                                                                        });
+                                                                        %>
+                                                                        <span class="badge <%= totalStock > 0 ? 'bg-success' : 'bg-danger' %>">
+                                                                            <%= totalStock %>
+                                                                        </span>
+                                                                    <% } else { %>
+                                                                        <span class="badge <%= product.stock > 0 ? 'bg-success' : 'bg-danger' %>">
+                                                                            <%= product.stock %>
+                                                                        </span>
+                                                                    <% } %>
+                                                                </td>
+                                                                <td>
+                                                                    <% if (product.is_active) { %>
+                                                                        <span class="badge bg-success">Hoạt động</span>
+                                                                    <% } else { %>
+                                                                        <span class="badge bg-danger">Đã tắt</span>
+                                                                    <% } %>
+                                                                </td>
+                                                                <td>
+                                                                    <small>
+                                                                        <%= moment(product.createdAt).format('DD/MM/YYYY HH:mm') %>
+                                                                    </small>
+                                                                </td>
+                                                                <td>
+                                                                    <div class="btn-group" role="group">
+                                                                        <button type="button" 
+                                                                                class="btn btn-sm btn-info btn-view-product btn-mr-bdr" 
+                                                                                data-id="<%= product._id %>" 
+                                                                                title="Xem chi tiết"
+                                                                                data-bs-toggle="modal" 
+                                                                                data-bs-target="#productDetailModal">
+                                                                            <i class="fa fa-eye"></i>
+                                                                        </button>
+                                                                        <a href="/admin/products/edit/<%= product._id %>"
+                                                                            class="btn btn-sm btn-warning btn-mr-bdr"
+                                                                            title="Sửa">
+                                                                            <i class="fa fa-edit"></i>
+                                                                        </a>
+
+                                                                        <% if (product.is_active) { %>
+                                                                            <button type="button"
+                                                                                class="btn btn-sm btn-danger btn-delete btn-mr-bdr"
+                                                                                data-id="<%= product._id %>"
+                                                                                title="Xóa">
+                                                                                <i class="fa fa-trash"></i>
+                                                                            </button>
+                                                                        <% } else { %>
+                                                                            <button type="button"
+                                                                                class="btn btn-sm btn-success btn-restore btn-mr-bdr"
+                                                                                data-id="<%= product._id %>"
+                                                                                title="Khôi phục">
+                                                                                <i class="fa fa-undo"></i>
+                                                                            </button>
+                                                                            <button type="button"
+                                                                                class="btn btn-sm btn-dark btn-force-delete btn-mr-bdr"
+                                                                                data-id="<%= product._id %>"
+                                                                                title="Xóa vĩnh viễn">
+                                                                                <i class="fa fa-times"></i>
+                                                                            </button>
+                                                                        <% } %>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        <% }) %>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
+                                            <!-- Phân trang -->
+                                            <% if (pagination.totalPages > 1) { %>
+                                                <nav aria-label="Phân trang">
+                                                    <ul class="pagination justify-content-center">
+                                                        <!-- Nút Previous -->
+                                                        <li class="page-item <%= pagination.page === 1 ? 'disabled' : '' %>">
+                                                            <a class="page-link" href="?page=<%= pagination.page - 1 %>&limit=<%= pagination.limit %>">
+                                                                <i class="fa fa-chevron-left"></i>
+                                                            </a>
+                                                        </li>
+
+                                                        <!-- Các số trang -->
+                                                        <% 
+                                                        let startPage = Math.max(1, pagination.page - 2);
+                                                        let endPage = Math.min(pagination.totalPages, pagination.page + 2);
+                                                        
+                                                        // Hiển thị trang đầu
+                                                        if (startPage > 1) { %>
+                                                            <li class="page-item">
+                                                                <a class="page-link" href="?page=1&limit=<%= pagination.limit %>">1</a>
+                                                            </li>
+                                                            <% if (startPage > 2) { %>
+                                                                <li class="page-item disabled">
+                                                                    <span class="page-link">...</span>
+                                                                </li>
+                                                            <% } %>
+                                                        <% } %>
+
+                                                        <!-- Các trang ở giữa -->
+                                                        <% for (let i = startPage; i <= endPage; i++) { %>
+                                                            <li class="page-item <%= i === pagination.page ? 'active' : '' %>">
+                                                                <a class="page-link" href="?page=<%= i %>&limit=<%= pagination.limit %>"><%= i %></a>
+                                                            </li>
+                                                        <% } %>
+
+                                                        <!-- Hiển thị trang cuối -->
+                                                        <% if (endPage < pagination.totalPages) { %>
+                                                            <% if (endPage < pagination.totalPages - 1) { %>
+                                                                <li class="page-item disabled">
+                                                                    <span class="page-link">...</span>
+                                                                </li>
+                                                            <% } %>
+                                                            <li class="page-item">
+                                                                <a class="page-link" href="?page=<%= pagination.totalPages %>&limit=<%= pagination.limit %>"><%= pagination.totalPages %></a>
+                                                            </li>
+                                                        <% } %>
+
+                                                        <!-- Nút Next -->
+                                                        <li class="page-item <%= pagination.page === pagination.totalPages ? 'disabled' : '' %>">
+                                                            <a class="page-link" href="?page=<%= pagination.page + 1 %>&limit=<%= pagination.limit %>">
+                                                                <i class="fa fa-chevron-right"></i>
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </nav>
+                                            <% } %>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <%- include('../../partials/admin/Footer') %>
+
+                </div>
+
+                <!-- Modal xem chi tiết sản phẩm -->
+                <div class="modal fade" id="productDetailModal" tabindex="-1" aria-labelledby="productDetailModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-xl">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="productDetailModalLabel">Chi tiết Sản phẩm: <span id="modalProductName"></span></h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body" id="modalProductContent">
+                                <div class="text-center">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Đang tải...</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <%- include('../../partials/admin/Script') %>
+
+                <script>
+                    // Thay đổi số item mỗi trang
+                    document.getElementById('limitSelect').addEventListener('change', function() {
+                        const limit = this.value;
+                        const urlParams = new URLSearchParams(window.location.search);
+                        urlParams.set('limit', limit);
+                        urlParams.set('page', '1');
+                        window.location.search = urlParams.toString();
+                    });
+
+                    // Xem chi tiết sản phẩm
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const productDetailModal = document.getElementById('productDetailModal');
+                        const modalProductName = document.getElementById('modalProductName');
+                        const modalProductContent = document.getElementById('modalProductContent');
+
+                        productDetailModal.addEventListener('show.bs.modal', async function (event) {
+                            const button = event.relatedTarget;
+                            const productId = button.dataset.id;
+
+                            modalProductName.textContent = 'Đang tải...';
+                            modalProductContent.innerHTML = `
+                                <div class="text-center">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Đang tải...</span>
+                                    </div>
+                                </div>
+                            `;
+
+                            try {
+                                const response = await fetch(`/admin/products/view/${productId}`);
+                                const result = await response.json();
+
+                                if (result.success) {
+                                    const product = result.product;
+                                    modalProductName.textContent = product.name;
+
+                                    let contentHtml = `
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <h6>Ảnh Thumbnail:</h6>
+                                                <img src="${product.thumbnail || '/images/null.png'}" 
+                                                     alt="${product.name}" 
+                                                     class="img-fluid rounded mb-3">
+                                                
+                                                ${product.images && product.images.length > 0 && !product.has_variants ? `
+                                                    <h6>Ảnh phụ:</h6>
+                                                    <div class="product-images-grid mb-3">
+                                                        ${product.images.map(img => `<img src="${img}" alt="Ảnh phụ">`).join('')}
+                                                    </div>
+                                                ` : ''}
+                                            </div>
+                                            <div class="col-md-8">
+                                                <dl class="row mb-0">
+                                                    <dt class="col-sm-3">ID:</dt>
+                                                    <dd class="col-sm-9"><code>${product._id}</code></dd>
+
+                                                    <dt class="col-3">Tên sản phẩm:</dt>
+                                                    <dd class="col-9"><strong>${product.name}</strong></dd>
+
+                                                    <dt class="col-sm-3">Slug:</dt>
+                                                    <dd class="col-sm-9"><code>${product.slug}</code></dd>
+
+                                                    <dt class="col-sm-3">Danh mục:</dt>
+                                                    <dd class="col-sm-9">${product.category_id || '<span class="text-muted">Chưa phân loại</span>'}</dd>
+
+                                                    <dt class="col-sm-3">Loại:</dt>
+                                                    <dd class="col-sm-9">
+                                                        ${product.has_variants 
+                                                            ? '<span class="badge bg-warning"><i class="fa fa-tags me-1"></i>Có biến thể</span>' 
+                                                            : '<span class="badge bg-secondary"><i class="fa fa-cube me-1"></i>Đơn giản</span>'}
+                                                    </dd>
+
+                                                    <dt class="col-sm-3">Trạng thái:</dt>
+                                                    <dd class="col-sm-9">
+                                                        ${product.is_active 
+                                                            ? '<span class="badge bg-success">Hoạt động</span>' 
+                                                            : '<span class="badge bg-danger">Đã tắt</span>'}
+                                                    </dd>
+
+                                                    <dt class="col-sm-3">Ngày tạo:</dt>
+                                                    <dd class="col-sm-9">${moment(product.createdAt).format('DD/MM/YYYY HH:mm')}</dd>
+                                                    
+                                                    ${product.updatedAt ? `
+                                                        <dt class="col-sm-3">Cập nhật cuối:</dt>
+                                                        <dd class="col-sm-9">${moment(product.updatedAt).format('DD/MM/YYYY HH:mm')}</dd>
+                                                    ` : ''}
+                                                </dl>
+                                                <div class="mt-3">
+                                                    <h6>Mô tả:</h6>
+                                                    <p class="text-muted">${product.description || 'Không có mô tả'}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `;
+
+                                    // Hiển thị chi tiết theo loại sản phẩm
+                                    if (product.has_variants && product.variants && product.variants.length > 0) {
+                                        contentHtml += '<hr><h5 class="text-warning">Thông tin Biến thể:</h5>';
+                                        product.variants.forEach((variant, index) => {
+                                            contentHtml += `
+                                                <div class="card mb-3">
+                                                    <div class="card-header bg-light">
+                                                        <strong>Biến thể ${index + 1}: Màu "${variant.color}"</strong> 
+                                                        <span style="display:inline-block; width:20px; height:20px; background:${variant.color_code}; border:1px solid #ddd; border-radius:3px; margin-left:10px; vertical-align: middle;"></span>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        ${variant.images && variant.images.length > 0 ? `
+                                                            <p><strong>Ảnh biến thể:</strong></p>
+                                                            <div class="d-flex flex-wrap mb-3">
+                                                                ${variant.images.map(img => `<img src="${img}" alt="Ảnh màu ${variant.color}" class="variant-image-thumbnail">`).join('')}
+                                                            </div>
+                                                        ` : '<p class="text-muted">Không có ảnh cho biến thể này.</p>'}
+                                                        
+                                                        <p><strong>Kích thước & Giá:</strong></p>
+                                                        ${variant.sizes && variant.sizes.length > 0 ? `
+                                                            <div class="table-responsive">
+                                                                <table class="table table-sm table-bordered">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>Size</th>
+                                                                            <th>Giá</th>
+                                                                            <th>Tồn kho</th>
+                                                                            <th>SKU</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        ${variant.sizes.map(size => `
+                                                                            <tr>
+                                                                                <td><strong>${size.size}</strong></td>
+                                                                                <td>${size.price.toLocaleString('vi-VN')}đ</td>
+                                                                                <td><span class="badge ${size.stock > 0 ? 'bg-success' : 'bg-danger'}">${size.stock}</span></td>
+                                                                                <td><code>${size.sku || '-'}</code></td>
+                                                                            </tr>
+                                                                        `).join('')}
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        ` : '<p class="text-muted">Không có kích thước cho biến thể này.</p>'}
+                                                    </div>
+                                                </div>
+                                            `;
+                                        });
+                                    } else if (!product.has_variants) { // Sản phẩm đơn giản
+                                        contentHtml += `
+                                            <hr>
+                                            <h5 class="text-secondary">Thông tin sản phẩm đơn giản:</h5>
+                                            <dl class="row">
+                                                <dt class="col-sm-2">Giá:</dt>
+                                                <dd class="col-sm-4"><strong class="text-primary">${product.price.toLocaleString('vi-VN')}đ</strong></dd>
+
+                                                <dt class="col-sm-2">Tồn kho:</dt>
+                                                <dd class="col-sm-4"><span class="badge ${product.stock > 0 ? 'bg-success' : 'bg-danger'}">${product.stock}</span></dd>
+
+                                                <dt class="col-sm-2">SKU:</dt>
+                                                <dd class="col-sm-4"><code>${product.sku || '-'}</code></dd>
+                                            </dl>
+                                        `;
+                                    }
+
+                                    modalProductContent.innerHTML = contentHtml;
+
+                                } else {
+                                    modalProductName.textContent = 'Lỗi!';
+                                    modalProductContent.innerHTML = `<div class="alert alert-danger">${result.message}</div>`;
+                                }
+                            } catch (error) {
+                                console.error('Lỗi khi lấy dữ liệu sản phẩm:', error);
+                                modalProductName.textContent = 'Lỗi!';
+                                modalProductContent.innerHTML = `<div class="alert alert-danger">Không thể tải chi tiết sản phẩm. Vui lòng thử lại.</div>`;
+                            }
+                        });
+                    });
+
+                    // Xóa tạm
+                    document.querySelectorAll('.btn-delete').forEach(btn => {
+                        btn.addEventListener('click', async function () {
+                            const id = this.dataset.id;
+                            if (confirm('Bạn có chắc muốn xóa sản phẩm này? Sản phẩm sẽ được chuyển vào thùng rác.')) {
+                                try {
+                                    const response = await fetch(`/admin/products/delete/${id}`, {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' }
+                                    });
+                                    const data = await response.json();
+                                    if (data.success) {
+                                        alert(data.message);
+                                        location.reload();
+                                    } else {
+                                        alert(data.message);
+                                    }
+                                } catch (error) {
+                                    alert('Có lỗi xảy ra: ' + error.message);
+                                }
+                            }
+                        });
+                    });
+
+                    // Khôi phục
+                    document.querySelectorAll('.btn-restore').forEach(btn => {
+                        btn.addEventListener('click', async function () {
+                            const id = this.dataset.id;
+                            if (confirm('Bạn có chắc muốn khôi phục sản phẩm này?')) {
+                                try {
+                                    const response = await fetch(`/admin/products/restore/${id}`, {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' }
+                                    });
+                                    const data = await response.json();
+                                    if (data.success) {
+                                        alert(data.message);
+                                        location.reload();
+                                    } else {
+                                        alert(data.message);
+                                    }
+                                } catch (error) {
+                                    alert('Có lỗi xảy ra: ' + error.message);
+                                }
+                            }
+                        });
+                    });
+
+                    // Xóa vĩnh viễn
+                    document.querySelectorAll('.btn-force-delete').forEach(btn => {
+                        btn.addEventListener('click', async function () {
+                            const id = this.dataset.id;
+                            if (confirm('CẢNH BÁO: Bạn có chắc muốn XÓA VĨNH VIỄN sản phẩm này? Hành động này KHÔNG THỂ KHÔI PHỤC và sẽ xóa tất cả dữ liệu, hình ảnh liên quan!')) {
+                                try {
+                                    const response = await fetch(`/admin/products/force-delete/${id}`, {
+                                        method: 'DELETE',
+                                        headers: { 'Content-Type': 'application/json' }
+                                    });
+                                    const data = await response.json();
+                                    if (data.success) {
+                                        alert(data.message);
+                                        location.reload();
+                                    } else {
+                                        alert(data.message);
+                                    }
+                                } catch (error) {
+                                    alert('Có lỗi xảy ra: ' + error.message);
+                                }
+                            }
+                        });
+                    });
+                </script>
+</body>
+
+</html>

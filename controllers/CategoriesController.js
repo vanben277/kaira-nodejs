@@ -21,13 +21,28 @@ class CategoriesController {
     // [GET] /admin/categories
     async index(req, res) {
         try {
+            const page = parseInt(req.query.page) || 1;
+            const limit = parseInt(req.query.limit) || 10;
+            const skip = (page - 1) * limit;
+
+            const totalCategories = await Category.countDocuments();
+            const totalPages = Math.ceil(totalCategories / limit);
+
             const categories = await Category.find()
                 .populate('parent_id', 'name')
-                .sort({ createdAt: -1 });
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(limit);
 
             res.render('admin/categories/index', {
                 categories,
-                moment: require('moment') // ngày tháng
+                moment: require('moment'),
+                pagination: {
+                    page: page,
+                    limit: limit,
+                    totalPages: totalPages,
+                    totalCategories: totalCategories
+                }
             });
         } catch (error) {
             console.error('Lỗi lấy danh sách danh mục:', error);
@@ -99,7 +114,7 @@ class CategoriesController {
             const existingSlug = await Category.findOne({ slug: finalSlug });
             if (existingSlug) {
                 return res.status(400).render('errors/400', {
-                    error: 'Slug đã tồn tại, vui lòng chọn slug khác'
+                    message: 'Slug đã tồn tại, vui lòng chọn slug khác'
                 });
             }
 
@@ -135,11 +150,11 @@ class CategoriesController {
 
             if (error.code === 11000) {
                 return res.status(400).render('errors/400', {
-                    error: 'Tên danh mục hoặc slug đã tồn tại'
+                    message: 'Tên danh mục hoặc slug đã tồn tại'
                 });
             }
 
-            res.status(500).render('errors/500', { error: error.message });
+            res.status(500).render('errors/500', { message: error.message });
         }
     }
 
@@ -151,7 +166,7 @@ class CategoriesController {
             const category = await Category.findById(id);
             if (!category) {
                 return res.status(404).render('errors/404', {
-                    error: 'Không tìm thấy danh mục'
+                    message: 'Không tìm thấy danh mục'
                 });
             }
 
@@ -168,7 +183,7 @@ class CategoriesController {
             });
         } catch (error) {
             console.error('Lỗi hiển thị form sửa:', error);
-            res.status(500).render('errors/500', { error: error.message });
+            res.status(500).render('errors/500', { message: error.message });
         }
     }
 
@@ -178,11 +193,10 @@ class CategoriesController {
             const { id } = req.params;
             const { name, slug, parent_id, description, is_active, remove_image } = req.body;
 
-            // 🔍 Tìm danh mục theo ID
             const category = await Category.findById(id);
             if (!category) {
                 return res.status(404).render('errors/404', {
-                    error: 'Không tìm thấy danh mục'
+                    message: 'Không tìm thấy danh mục'
                 });
             }
 
@@ -196,7 +210,7 @@ class CategoriesController {
             });
             if (existingSlug) {
                 return res.status(400).render('errors/400', {
-                    error: 'Slug đã tồn tại, vui lòng chọn slug khác'
+                    message: 'Slug đã tồn tại, vui lòng chọn slug khác'
                 });
             }
 
@@ -258,7 +272,7 @@ class CategoriesController {
                 }
             }
 
-            res.status(500).render('errors/500', { error: error.message });
+            res.status(500).render('errors/500', { message: error.message });
         }
     }
 

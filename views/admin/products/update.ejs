@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Chỉnh sửa sản phẩm: <%= product.name %></title>
+    <%- include('../../partials/admin/Head') %>
+    <style>
+        .image-preview-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .image-preview-item {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .image-preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .image-preview-item .remove-image-btn {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            background-color: rgba(220, 53, 69, 0.8);
+            color: white;
+            border: none;
+            border-radius: 3px;
+            padding: 3px 6px;
+            font-size: 0.75rem;
+            line-height: 1;
+            cursor: pointer;
+        }
+        .image-preview-item.new-upload {
+            border: 2px dashed #007bff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-xxl position-relative bg-white d-flex p-0">
+
+        <%- include('../../partials/admin/Reload') %>
+
+            <%- include('../../partials/admin/Sidebar') %>
+
+                <div class="content">
+
+                    <%- include('../../partials/admin/Header') %>
+
+                        <div class="container-fluid pt-4 px-4">
+                            <div class="row g-4">
+                                <div class="col-sm-12 col-xl-12">
+                                    <div class="bg-light rounded h-100 p-4">
+                                        <h6 class="mb-4">Chỉnh sửa Sản phẩm: <span class="text-primary"><%= product.name %></span></h6>
+
+                                        <form action="/admin/products/update/<%= product._id %>" method="POST" enctype="multipart/form-data" id="productForm">
+
+                                            <h6 class="mb-3 text-primary">Thông tin cơ bản</h6>
+                                            
+                                            <!-- Tên sản phẩm -->
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" id="name" name="name" placeholder="Tên sản phẩm" value="<%= product.name %>" required>
+                                                <label for="name">Tên sản phẩm *</label>
+                                            </div>
+
+                                            <!-- Slug -->
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" id="slug" name="slug" placeholder="slug-san-pham" value="<%= product.slug %>">
+                                                <label for="slug">Slug (URL thân thiện)</label>
+                                                <small class="text-muted">Để trống để tự động tạo từ tên sản phẩm</small>
+                                            </div>
+
+                                            <!-- Danh mục -->
+                                            <div class="form-floating mb-3">
+                                                <select class="form-select" id="category_id" name="category_id">
+                                                    <option value="">-- Chọn danh mục --</option>
+                                                    <% if (typeof categories !== 'undefined' && categories.length > 0) { %>
+                                                        <% categories.forEach(category => { %>
+                                                            <% 
+                                                                const isSelected = product.category_id && 
+                                                                    (product.category_id._id || product.category_id).toString() === category._id.toString();
+                                                            %>
+                                                            <option value="<%= category._id %>" <%= isSelected ? 'selected' : '' %>>
+                                                                <%= category.name %>
+                                                            </option>
+                                                        <% }) %>
+                                                    <% } %>
+                                                </select>
+                                                <label for="category_id">Danh mục *</label>
+                                            </div>
+
+                                            <!-- Mô tả -->
+                                            <div class="form-floating mb-3">
+                                                <textarea class="form-control" placeholder="Mô tả sản phẩm" id="description" name="description" style="height: 150px;"><%= product.description || '' %></textarea>
+                                                <label for="description">Mô tả</label>
+                                            </div>
+
+                                            <!-- Upload ảnh thumbnail -->
+                                            <div class="mb-3">
+                                                <label for="thumbnail" class="form-label">Ảnh đại diện</label>
+                                                <input type="file" class="form-control" id="thumbnail" name="thumbnail" accept="image/*">
+                                                <small class="text-muted">Chọn ảnh mới để thay thế ảnh hiện tại.</small>
+                                                <div id="thumbnailPreview" class="mt-2">
+                                                    <% if (product.thumbnail) { %>
+                                                        <img src="<%= product.thumbnail %>" style="max-width: 150px; max-height: 150px; border-radius: 5px;" class="border" alt="Ảnh thumbnail hiện tại">
+                                                    <% } %>
+                                                </div>
+                                            </div>
+
+                                            <hr class="my-4">
+
+                                            <!-- LOẠI SẢN PHẨM -->
+                                            <h6 class="mb-3 text-primary">Loại sản phẩm</h6>
+                                            
+                                            <div class="form-check form-switch mb-4">
+                                                <input class="form-check-input" type="checkbox" id="has_variants" name="has_variants" <%= product.has_variants ? 'checked' : '' %>>
+                                                <label class="form-check-label" for="has_variants">
+                                                    <strong>Sản phẩm có biến thể</strong> (màu sắc, kích thước)
+                                                </label>
+                                            </div>
+
+                                            <!-- PHẦN SẢN PHẨM ĐơN GIẢN (KHÔNG BIẾN THỂ) -->
+                                            <div id="simpleProductSection" style="display: <%= product.has_variants ? 'none' : 'block' %>;">
+                                                <h6 class="mb-3 text-success">Thông tin sản phẩm đơn giản</h6>
+
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="form-floating mb-3">
+                                                            <input type="number" class="form-control" id="price" name="price" placeholder="Giá" min="0" step="1000" value="<%= product.price || '' %>" <%= !product.has_variants ? 'required' : '' %>>
+                                                            <label for="price">Giá (VNĐ) *</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="form-floating mb-3">
+                                                            <input type="number" class="form-control" id="stock" name="stock" placeholder="Tồn kho" min="0" value="<%= product.stock || 0 %>" <%= !product.has_variants ? 'required' : '' %>>
+                                                            <label for="stock">Tồn kho *</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="form-floating mb-3">
+                                                            <input type="text" class="form-control" id="sku" name="sku" placeholder="SKU" value="<%= product.sku || '' %>">
+                                                            <label for="sku">Mã SKU</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Upload nhiều ảnh -->
+                                                <div class="mb-3">
+                                                    <label for="images" class="form-label">Ảnh sản phẩm (nhiều ảnh)</label>
+                                                    <input type="file" class="form-control" id="images" name="images" accept="image/*" multiple>
+                                                    <small class="text-muted">Chọn thêm ảnh mới. Bạn có thể xóa ảnh cũ bên dưới.</small>
+                                                    <div id="imagesPreview" class="image-preview-container">
+                                                        <% if (product.images && product.images.length > 0) { %>
+                                                            <% product.images.forEach(image => { %>
+                                                                <div class="image-preview-item" data-image-url="<%= image %>">
+                                                                    <img src="<%= image %>" alt="Ảnh sản phẩm">
+                                                                    <button type="button" class="remove-image-btn" onclick="removeExistingImage(this, '<%= image %>')">X</button>
+                                                                </div>
+                                                            <% }) %>
+                                                        <% } %>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- PHẦN SẢN PHẨM CÓ BIẾN THỂ -->
+                                            <div id="variantProductSection" style="display: <%= product.has_variants ? 'block' : 'none' %>;">
+                                                <h6 class="mb-3 text-warning">Biến thể sản phẩm</h6>
+                                                
+                                                <div id="variantsContainer">
+                                                    <% if (product.has_variants && product.variants && product.variants.length > 0) { %>
+                                                        <% product.variants.forEach((variant, vIdx) => { %>
+                                                            <div class="card mb-3 variant-item" data-variant-index="<%= vIdx %>">
+                                                                <div class="card-header bg-warning text-white d-flex justify-content-between align-items-center">
+                                                                    <span>Biến thể #<%= vIdx + 1 %></span>
+                                                                    <button type="button" class="btn btn-sm btn-danger remove-variant-btn" onclick="removeVariant(this, <%= vIdx %>)">
+                                                                        <i class="fa fa-trash"></i>
+                                                                    </button>
+                                                                </div>
+                                                                <div class="card-body">
+                                                                    <div class="row">
+                                                                        <div class="col-md-4">
+                                                                            <div class="form-floating mb-3">
+                                                                                <input type="text" class="form-control" name="variants[<%= vIdx %>][color]" placeholder="Màu sắc" value="<%= variant.color %>" required>
+                                                                                <label>Màu sắc *</label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-4">
+                                                                            <div class="form-floating mb-3">
+                                                                                <input type="color" class="form-control" name="variants[<%= vIdx %>][color_code]" value="<%= variant.color_code || '#000000' %>">
+                                                                                <label>Mã màu</label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-4">
+                                                                            <div class="mb-3">
+                                                                                <label class="form-label">Ảnh màu này (nhiều ảnh)</label>
+                                                                                <input type="file" class="form-control variant-images" data-variant-index="<%= vIdx %>" name="variants[<%= vIdx %>][images]" accept="image/*" multiple>
+                                                                                <small class="text-muted">Chọn thêm ảnh mới. Bạn có thể xóa ảnh cũ bên dưới.</small>
+                                                                                <div class="image-preview-container mt-2">
+                                                                                    <% if (variant.images && variant.images.length > 0) { %>
+                                                                                        <% variant.images.forEach(image => { %>
+                                                                                            <div class="image-preview-item" data-image-url="<%= image %>">
+                                                                                                <img src="<%= image %>" alt="Ảnh biến thể">
+                                                                                                <button type="button" class="remove-image-btn" onclick="removeExistingVariantImage(this, <%= vIdx %>, '<%= image %>')">X</button>
+                                                                                            </div>
+                                                                                        <% }) %>
+                                                                                    <% } %>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <h6 class="text-info mb-2">Kích thước & Giá</h6>
+                                                                    <div class="sizes-container" id="sizesContainer<%= vIdx %>">
+                                                                        <% if (variant.sizes && variant.sizes.length > 0) { %>
+                                                                            <% variant.sizes.forEach((size, sIdx) => { %>
+                                                                                <div class="card mb-2 size-item">
+                                                                                    <div class="card-body">
+                                                                                        <div class="row align-items-end">
+                                                                                            <div class="col-md-2">
+                                                                                                <div class="form-floating">
+                                                                                                    <input type="text" class="form-control" name="variants[<%= vIdx %>][sizes][<%= sIdx %>][size]" placeholder="Size" value="<%= size.size %>" required>
+                                                                                                    <label>Size *</label>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-md-3">
+                                                                                                <div class="form-floating">
+                                                                                                    <input type="number" class="form-control" name="variants[<%= vIdx %>][sizes][<%= sIdx %>][price]" placeholder="Giá" min="0" step="1000" value="<%= size.price %>" required>
+                                                                                                    <label>Giá (VNĐ) *</label>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-md-2">
+                                                                                                <div class="form-floating">
+                                                                                                    <input type="number" class="form-control" name="variants[<%= vIdx %>][sizes][<%= sIdx %>][stock]" placeholder="Tồn kho" min="0" value="<%= size.stock %>" required>
+                                                                                                    <label>Tồn kho *</label>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-md-3">
+                                                                                                <div class="form-floating">
+                                                                                                    <input type="text" class="form-control" name="variants[<%= vIdx %>][sizes][<%= sIdx %>][sku]" placeholder="SKU" value="<%= size.sku || '' %>">
+                                                                                                    <label>SKU</label>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-md-2">
+                                                                                                <button type="button" class="btn btn-danger btn-sm w-100" onclick="this.closest('.size-item').remove()">
+                                                                                                    <i class="fa fa-trash"></i>
+                                                                                                </button>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            <% }) %>
+                                                                        <% } %>
+                                                                    </div>
+                                                                    
+                                                                    <button type="button" class="btn btn-sm btn-info" onclick="addSize(<%= vIdx %>)">
+                                                                        <i class="fa fa-plus me-1"></i>Thêm size
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        <% }) %>
+                                                    <% } %>
+                                                </div>
+
+                                                <button type="button" class="btn btn-success mb-3" id="addVariantBtn">
+                                                    <i class="fa fa-plus me-2"></i>Thêm biến thể màu sắc
+                                                </button>
+                                            </div>
+
+                                            <hr class="my-4">
+
+                                            <!-- CÁC THIẾT LẬP KHÁC -->
+                                            <h6 class="mb-3 text-primary">Thiết lập khác</h6>
+
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="form-check form-switch mb-3">
+                                                        <input class="form-check-input" type="checkbox" id="is_active" name="is_active" <%= product.is_active ? 'checked' : '' %>>
+                                                        <label class="form-check-label" for="is_active">
+                                                            Kích hoạt sản phẩm
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Các trường ẩn để theo dõi ảnh đã bị xóa -->
+                                            <div id="deletedImagesInputContainer"></div>
+                                            <div id="deletedVariantImagesInputContainer"></div>
+
+                                            <!-- Buttons -->
+                                            <div class="d-flex gap-2">
+                                                <button type="submit" class="btn btn-primary">
+                                                    <i class="fa fa-save me-2"></i>Cập nhật sản phẩm
+                                                </button>
+                                                <a href="/admin/products" class="btn btn-secondary">
+                                                    <i class="fa fa-times me-2"></i>Hủy
+                                                </a>
+                                            </div>
+
+                                        </form>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <%- include('../../partials/admin/Footer') %>
+
+                </div>
+
+                <%- include('../../partials/admin/Script') %>
+
+                <script>
+                    let currentVariantIndex = <%= product.variants?.length || 0 %>;
+                    let deletedImageUrls = []; // Mảng chứa URL ảnh phụ đã bị xóa
+                    let deletedVariantImageUrls = []; // Mảng chứa URL ảnh biến thể đã bị xóa
+
+                    // Hàm điền lại chỉ mục của các biến thể và size sau khi xóa
+                    function reindexVariants() {
+                        const variants = document.querySelectorAll('#variantsContainer .variant-item');
+                        variants.forEach((variantElement, vIdx) => {
+                            variantElement.dataset.variantIndex = vIdx;
+                            variantElement.querySelector('.card-header span').textContent = `Biến thể #${vIdx + 1}`;
+                            
+                            // Cập nhật onclick cho nút xóa biến thể
+                            const removeBtn = variantElement.querySelector('.remove-variant-btn');
+                            if (removeBtn) {
+                                removeBtn.setAttribute('onclick', `removeVariant(this, ${vIdx})`);
+                            }
+
+                            // Cập nhật tên input cho các trường màu sắc, mã màu, ảnh
+                            variantElement.querySelector('[name^="variants["][name$="[color]"]').name = `variants[${vIdx}][color]`;
+                            variantElement.querySelector('[name^="variants["][name$="[color_code]"]').name = `variants[${vIdx}][color_code]`;
+                            
+                            const variantImagesInput = variantElement.querySelector('.variant-images');
+                            if (variantImagesInput) {
+                                variantImagesInput.name = `variants[${vIdx}][images]`;
+                                variantImagesInput.dataset.variantIndex = vIdx; // Cập nhật lại data-variant-index
+                            }
+
+                            // Cập nhật onclick cho nút thêm size
+                            const addSizeBtn = variantElement.querySelector('.btn-info[onclick^="addSize("]');
+                            if (addSizeBtn) {
+                                addSizeBtn.setAttribute('onclick', `addSize(${vIdx})`);
+                            }
+
+                            // Cập nhật id của container size
+                            const sizesContainer = variantElement.querySelector('.sizes-container');
+                            if (sizesContainer) {
+                                sizesContainer.id = `sizesContainer${vIdx}`;
+                            }
+
+                            // Cập nhật tên input cho các size
+                            const sizes = variantElement.querySelectorAll('.size-item');
+                            sizes.forEach((sizeElement, sIdx) => {
+                                sizeElement.querySelectorAll('input').forEach(input => {
+                                    const oldName = input.name;
+                                    const newName = oldName.replace(/variants\[\d+\]\[sizes\]\[\d+\]/, `variants[${vIdx}][sizes][${sIdx}]`);
+                                    input.name = newName;
+                                });
+                            });
+
+                            // Cập nhật onclick cho nút xóa ảnh biến thể
+                            variantElement.querySelectorAll('.remove-image-btn').forEach(btn => {
+                                const oldOnClick = btn.getAttribute('onclick');
+                                if (oldOnClick.includes('removeExistingVariantImage')) {
+                                    const imageUrl = btn.closest('.image-preview-item').dataset.imageUrl;
+                                    btn.setAttribute('onclick', `removeExistingVariantImage(this, ${vIdx}, '${imageUrl}')`);
+                                }
+                            });
+                        });
+                        currentVariantIndex = variants.length; // Cập nhật lại chỉ mục cho biến thể mới
+                    }
+
+                    // Toggle giữa sản phẩm đơn giản và có biến thể
+                    document.getElementById('has_variants').addEventListener('change', function() {
+                        const simpleSection = document.getElementById('simpleProductSection');
+                        const variantSection = document.getElementById('variantProductSection');
+                        
+                        if (this.checked) {
+                            simpleSection.style.display = 'none';
+                            variantSection.style.display = 'block';
+                            // Bỏ required cho sản phẩm đơn giản
+                            document.getElementById('price').removeAttribute('required');
+                            document.getElementById('stock').removeAttribute('required');
+                            // Xóa các input hidden cho ảnh cũ nếu chuyển sang có biến thể
+                            document.getElementById('deletedImagesInputContainer').innerHTML = '';
+                            deletedImageUrls = [];
+                        } else {
+                            simpleSection.style.display = 'block';
+                            variantSection.style.display = 'none';
+                            // Thêm required cho sản phẩm đơn giản
+                            document.getElementById('price').setAttribute('required', 'required');
+                            document.getElementById('stock').setAttribute('required', 'required');
+                            // Xóa các input hidden cho ảnh biến thể cũ nếu chuyển sang đơn giản
+                            document.getElementById('deletedVariantImagesInputContainer').innerHTML = '';
+                            deletedVariantImageUrls = [];
+                        }
+                    });
+
+                    // Thêm biến thể mới
+                    document.getElementById('addVariantBtn').addEventListener('click', function() {
+                        const container = document.getElementById('variantsContainer');
+                        const variantHtml = `
+                            <div class="card mb-3 variant-item" data-variant-index="${currentVariantIndex}">
+                                <div class="card-header bg-warning text-white d-flex justify-content-between align-items-center">
+                                    <span>Biến thể #${currentVariantIndex + 1}</span>
+                                    <button type="button" class="btn btn-sm btn-danger remove-variant-btn" onclick="removeVariant(this, ${currentVariantIndex})">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" name="variants[${currentVariantIndex}][color]" placeholder="Màu sắc" required>
+                                                <label>Màu sắc *</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-floating mb-3">
+                                                <input type="color" class="form-control" name="variants[${currentVariantIndex}][color_code]" value="#000000">
+                                                <label>Mã màu</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label class="form-label">Ảnh màu này (nhiều ảnh)</label>
+                                                <input type="file" class="form-control variant-images" data-variant-index="${currentVariantIndex}" name="variants[${currentVariantIndex}][images]" accept="image/*" multiple>
+                                                <div class="image-preview-container mt-2 new-variant-images-preview"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <h6 class="text-info mb-2">Kích thước & Giá</h6>
+                                    <div class="sizes-container" id="sizesContainer${currentVariantIndex}"></div>
+                                    
+                                    <button type="button" class="btn btn-sm btn-info" onclick="addSize(${currentVariantIndex})">
+                                        <i class="fa fa-plus me-1"></i>Thêm size
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                        container.insertAdjacentHTML('beforeend', variantHtml);
+                        currentVariantIndex++;
+                    });
+
+                    // Thêm size cho biến thể
+                    function addSize(variantIdx) {
+                        const container = document.getElementById(`sizesContainer${variantIdx}`);
+                        const sizeIdx = container.children.length; // Chỉ số cho size mới
+                        const sizeHtml = `
+                            <div class="card mb-2 size-item">
+                                <div class="card-body">
+                                    <div class="row align-items-end">
+                                        <div class="col-md-2">
+                                            <div class="form-floating">
+                                                <input type="text" class="form-control" name="variants[${variantIdx}][sizes][${sizeIdx}][size]" placeholder="Size" required>
+                                                <label>Size *</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-floating">
+                                                <input type="number" class="form-control" name="variants[${variantIdx}][sizes][${sizeIdx}][price]" placeholder="Giá" min="0" step="1000" required>
+                                                <label>Giá (VNĐ) *</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-floating">
+                                                <input type="number" class="form-control" name="variants[${variantIdx}][sizes][${sizeIdx}][stock]" placeholder="Tồn kho" min="0" value="0" required>
+                                                <label>Tồn kho *</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-floating">
+                                                <input type="text" class="form-control" name="variants[${variantIdx}][sizes][${sizeIdx}][sku]" placeholder="SKU">
+                                                <label>SKU</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="button" class="btn btn-danger btn-sm w-100" onclick="this.closest('.size-item').remove()">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        container.insertAdjacentHTML('beforeend', sizeHtml);
+                    }
+
+                    // Xóa biến thể hiện có
+                    function removeVariant(button, index) {
+                        if (confirm('Bạn có chắc muốn xóa biến thể này? Toàn bộ size và ảnh của biến thể sẽ bị xóa.')) {
+                            const variantElement = button.closest('.variant-item');
+                            
+                            // Thêm các ảnh của biến thể này vào danh sách cần xóa vĩnh viễn
+                            variantElement.querySelectorAll('.image-preview-item img').forEach(img => {
+                                const imageUrl = img.src.replace(window.location.origin, ''); // Lấy path tương đối
+                                if (imageUrl) {
+                                    deletedVariantImageUrls.push(imageUrl);
+                                }
+                            });
+
+                            variantElement.remove();
+                            reindexVariants(); // Sắp xếp lại chỉ mục sau khi xóa
+                            updateDeletedVariantImagesInput();
+                        }
+                    }
+
+                    // Preview ảnh thumbnail
+                    document.getElementById('thumbnail').addEventListener('change', function(e) {
+                        const preview = document.getElementById('thumbnailPreview');
+                        preview.innerHTML = ''; // Xóa ảnh cũ
+                        if (e.target.files[0]) {
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                preview.innerHTML = `<img src="${e.target.result}" style="max-width: 150px; max-height: 150px; border-radius: 5px;" class="border new-upload">`;
+                            }
+                            reader.readAsDataURL(e.target.files[0]);
+                        }
+                    });
+
+                    // Preview nhiều ảnh sản phẩm (khi thêm mới)
+                    document.getElementById('images').addEventListener('change', function(e) {
+                        const previewContainer = document.getElementById('imagesPreview');
+                        // Chỉ thêm ảnh mới vào, không xóa ảnh cũ đã có
+                        Array.from(e.target.files).forEach(file => {
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                const item = document.createElement('div');
+                                item.className = 'image-preview-item new-upload';
+                                item.innerHTML = `
+                                    <img src="${e.target.result}" alt="Ảnh sản phẩm mới">
+                                    <button type="button" class="remove-image-btn" onclick="this.closest('.image-preview-item').remove()">X</button>
+                                `;
+                                previewContainer.appendChild(item);
+                            }
+                            reader.readAsDataURL(file);
+                        });
+                    });
+
+                    // Xóa ảnh phụ hiện có (cho sản phẩm đơn giản)
+                    function removeExistingImage(button, imageUrl) {
+                        if (confirm('Bạn có chắc muốn xóa ảnh này? Ảnh sẽ bị xóa khỏi sản phẩm sau khi lưu.')) {
+                            button.closest('.image-preview-item').remove();
+                            deletedImageUrls.push(imageUrl);
+                            updateDeletedImagesInput();
+                        }
+                    }
+
+                    // Xóa ảnh biến thể hiện có
+                    function removeExistingVariantImage(button, variantIdx, imageUrl) {
+                        if (confirm('Bạn có chắc muốn xóa ảnh biến thể này? Ảnh sẽ bị xóa khỏi sản phẩm sau khi lưu.')) {
+                            button.closest('.image-preview-item').remove();
+                            deletedVariantImageUrls.push(imageUrl);
+                            updateDeletedVariantImagesInput();
+                        }
+                    }
+
+                    // Preview ảnh biến thể (khi thêm mới)
+                    document.getElementById('variantsContainer').addEventListener('change', function(e) {
+                        if (e.target.classList.contains('variant-images')) {
+                            const variantIdx = e.target.dataset.variantIndex;
+                            const previewContainer = e.target.nextElementSibling; // Container kế tiếp
+                            // Chỉ thêm ảnh mới, không xóa ảnh cũ
+                            Array.from(e.target.files).forEach(file => {
+                                const reader = new FileReader();
+                                reader.onload = function(e) {
+                                    const item = document.createElement('div');
+                                    item.className = 'image-preview-item new-upload';
+                                    item.innerHTML = `
+                                        <img src="${e.target.result}" alt="Ảnh biến thể mới">
+                                        <button type="button" class="remove-image-btn" onclick="this.closest('.image-preview-item').remove()">X</button>
+                                    `;
+                                    previewContainer.appendChild(item);
+                                }
+                                reader.readAsDataURL(file);
+                            });
+                        }
+                    });
+
+                    // Cập nhật input hidden cho ảnh phụ đã xóa
+                    function updateDeletedImagesInput() {
+                        const container = document.getElementById('deletedImagesInputContainer');
+                        container.innerHTML = '';
+                        deletedImageUrls.forEach(url => {
+                            const input = document.createElement('input');
+                            input.type = 'hidden';
+                            input.name = 'deletedImages[]'; // Dùng mảng để backend dễ dàng nhận
+                            input.value = url;
+                            container.appendChild(input);
+                        });
+                    }
+
+                    // Cập nhật input hidden cho ảnh biến thể đã xóa
+                    function updateDeletedVariantImagesInput() {
+                        const container = document.getElementById('deletedVariantImagesInputContainer');
+                        container.innerHTML = '';
+                        deletedVariantImageUrls.forEach(url => {
+                            const input = document.createElement('input');
+                            input.type = 'hidden';
+                            input.name = 'deletedVariantImages[]'; // Dùng mảng để backend dễ dàng nhận
+                            input.value = url;
+                            container.appendChild(input);
+                        });
+                    }
+
+                    // Validate form trước khi submit
+                    document.getElementById('productForm').addEventListener('submit', function(e) {
+                        const hasVariants = document.getElementById('has_variants').checked;
+                        
+                        if (hasVariants) {
+                            const variants = document.querySelectorAll('.variant-item');
+                            if (variants.length === 0) {
+                                e.preventDefault();
+                                alert('Vui lòng thêm ít nhất 1 biến thể!');
+                                return false;
+                            }
+                        }
+
+                        // Gọi cập nhật các input hidden trước khi submit
+                        updateDeletedImagesInput();
+                        updateDeletedVariantImagesInput();
+                    });
+
+                    // Khi trang load, nếu là sản phẩm có biến thể, gọi reindex để đảm bảo chỉ mục đúng
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const hasVariantsCheckbox = document.getElementById('has_variants');
+                        if (hasVariantsCheckbox.checked) {
+                            reindexVariants();
+                        }
+                    });
+                </script>
+</body>
+
+</html>
