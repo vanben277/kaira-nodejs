@@ -151,6 +151,8 @@ function processVariants(req, existingProductVariants = []) {
 
 
 class ProductsController {
+
+    // [GET] /admin/products/create
     async showAdd(req, res) {
         try {
             const categories = await Category.find({ is_active: true });
@@ -161,6 +163,7 @@ class ProductsController {
         }
     }
 
+    // [POST] /admin/products/store
     async create(req, res) {
         try {
             const { name, slug, description, category_id, has_variants, price, stock, sku, is_active } = req.body;
@@ -245,6 +248,7 @@ class ProductsController {
         }
     }
 
+    // [GET] /admin/products
     async index(req, res) {
         try {
             const page = parseInt(req.query.page) || 1;
@@ -276,6 +280,7 @@ class ProductsController {
         }
     }
 
+    // [GET] /admin/products/:id
     async showView(req, res) {
         try {
             const product = await Product.findById(req.params.id)
@@ -299,6 +304,7 @@ class ProductsController {
         }
     }
 
+    // [GET] /admin/products/:id/edit
     async showEdit(req, res) {
         try {
             const product = await Product.findById(req.params.id)
@@ -315,6 +321,7 @@ class ProductsController {
         }
     }
 
+    // [PUT] /admin/products/:id
     async update(req, res) {
         try {
             const productId = req.params.id;
@@ -431,6 +438,7 @@ class ProductsController {
         }
     }
 
+    // [DELETE] /admin/products/:id
     async delete(req, res) {
         try {
             const product = await Product.findByIdAndUpdate(req.params.id, { is_active: false }, { new: true });
@@ -444,6 +452,7 @@ class ProductsController {
         }
     }
 
+    // [PATCH] /admin/products/:id/restore
     async restore(req, res) {
         try {
             const product = await Product.findByIdAndUpdate(req.params.id, { is_active: true }, { new: true });
@@ -457,6 +466,7 @@ class ProductsController {
         }
     }
 
+    // [DELETE] /admin/products/:id/force
     async forceDelete(req, res) {
         try {
             const product = await Product.findById(req.params.id);
@@ -487,6 +497,62 @@ class ProductsController {
             res.status(500).json({ success: false, message: 'Lỗi server khi xóa vĩnh viễn sản phẩm.' });
         }
     }
-}
 
+    // [GET] /products/latest
+    async getLatestProducts(req, res) {
+        try {
+            const products = await Product.find({ is_active: true })
+                .sort({ createdAt: -1 })
+                .limit(4);
+
+            return res.json({
+                success: true,
+                products
+            });
+
+        } catch (error) {
+            console.error("Lỗi khi lấy sản phẩm mới nhất:", error);
+            return res.status(500).json({
+                success: false,
+                message: error.message
+            });
+        }
+    }
+
+    // [GET] /products/:id
+    async getProductDetail(req, res) {
+        try {
+            const { id } = req.params;
+            const product = await Product.findById(id).populate('category_id');
+
+            if (!product) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Sản phẩm không tồn tại'
+                });
+            }
+
+            return res.status(200).json({
+                success: true,
+                product
+            });
+
+        } catch (error) {
+            console.error("Lỗi khi lấy chi tiết sản phẩm:", error);
+
+            if (error.name === 'CastError') {
+                return res.status(400).json({
+                    success: false,
+                    message: 'ID sản phẩm không hợp lệ'
+                });
+            }
+
+            return res.status(500).json({
+                success: false,
+                message: 'Lỗi server nội bộ'
+            });
+        }
+    }
+
+}
 module.exports = new ProductsController();

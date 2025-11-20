@@ -385,6 +385,50 @@ class CategoriesController {
             });
         }
     }
+
+    // [GET] /categories/nested  
+    async getNestedCategories(req, res) {
+        try {
+            // Hàm đệ quy để xây dựng cây danh mục
+            const buildCategoryTree = async (parentId = null) => {
+                const categories = await Category.find({ parent_id: parentId, is_active: true }).sort({ name: 1 });
+                const categoryTree = [];
+
+                for (const category of categories) {
+                    const children = await buildCategoryTree(category._id);
+                    categoryTree.push({
+                        _id: category._id,
+                        name: category.name,
+                        slug: category.slug,
+                        children: children.length > 0 ? children : undefined,
+                    });
+                }
+                return categoryTree;
+            };
+
+            const nestedCategories = await buildCategoryTree();
+            res.json({ success: true, categories: nestedCategories });
+        } catch (error) {
+            console.error('Lỗi lấy danh mục phân cấp:', error);
+            res.status(500).json({ success: false, message: 'Lỗi server: ' + error.message });
+        }
+    }
+
+    // [GET] /api/categories/all-children
+    async getAllChildrenCategories(req, res) {
+        try {
+            const childrenCategories = await Category.find({ parent_id: { $ne: null }, is_active: true })
+                .populate('parent_id', 'name slug')
+                .select('name slug banner_url description parent_id')
+                .sort({ name: 1 });
+
+            res.json({ success: true, categories: childrenCategories });
+        } catch (error) {
+            console.error('Lỗi lấy tất cả danh mục con:', error);
+            res.status(500).json({ success: false, message: 'Lỗi server: ' + error.message });
+        }
+    }
+
 }
 
 module.exports = new CategoriesController();

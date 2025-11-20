@@ -6,6 +6,7 @@ const categoryUpload = require('../config/multerCategories');
 const productUpload = require('../config/multerProducts');
 const authMiddleware = require('../middleware/auth');
 
+// phan quyen
 router.use(authMiddleware.isAdmin);
 
 // -----------------------------------dashboard

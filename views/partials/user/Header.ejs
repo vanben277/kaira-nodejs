@@ -53,32 +53,7 @@
               <li class="nav-item">
                 <a class="nav-link" href="/">Trang Chủ</a>
               </li>
-              <li class="nav-item dropdown">
-                <a
-                  class="nav-link dropdown-toggle"
-                  href="#"
-                  id="dropdownBlog"
-                  data-bs-toggle="dropdown"
-                  aria-haspopup="true"
-                  aria-expanded="false"
-                  >Danh Mục</a
-                >
-                <ul
-                  class="dropdown-menu list-unstyled"
-                  aria-labelledby="dropdownBlog"
-                >
-                  <li>
-                    <a href="index.html" class="dropdown-item item-anchor"
-                      >Danh mục 1
-                    </a>
-                  </li>
-                  <li>
-                    <a href="index.html" class="dropdown-item item-anchor"
-                      >Danh mục 2
-                    </a>
-                  </li>
-                </ul>
-              </li>
+
               <% if (!session.fullName) { %>
               <!-- Chưa đăng nhập -->
               <li class="nav-item">
@@ -161,33 +136,3 @@
     </div>
   </div>
 </nav>
-
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const adminLogoutBtn = document.getElementById("adminLogoutBtn");
-
-    if (adminLogoutBtn) {
-      adminLogoutBtn.addEventListener("click", async (e) => {
-        e.preventDefault();
-
-        try {
-          const response = await fetch("/auth/logout", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
-          const data = await response.json();
-          if (data.success) {
-            window.location.href = data.redirect || "/auth/signin";
-          } else {
-            alert(data.message);
-          }
-        } catch (error) {
-          console.error("Lỗi khi đăng xuất:", error);
-          alert("Đã xảy ra lỗi khi đăng xuất.");
-        }
-      });
-    }
-  });
-</script>
