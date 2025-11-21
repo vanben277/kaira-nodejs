@@ -503,7 +503,7 @@ class ProductsController {
         try {
             const products = await Product.find({ is_active: true })
                 .sort({ createdAt: -1 })
-                .limit(4);
+                .limit(8);
 
             return res.json({
                 success: true,
@@ -554,5 +554,184 @@ class ProductsController {
         }
     }
 
+    // [GET] /products/random
+    async getRandomProducts(req, res) {
+        try {
+            const limit = parseInt(req.query.limit) || 8;
+
+            const randomProducts = await Product.aggregate([
+                { $sample: { size: limit } },
+                {
+                    $lookup: {
+                        from: 'categories',
+                        localField: 'category_id',
+                        foreignField: '_id',
+                        as: 'category'
+                    }
+                },
+                { $unwind: { path: '$category', preserveNullAndEmptyArrays: true } }
+            ]);
+
+            res.json({
+                success: true,
+                count: randomProducts.length,
+                data: randomProducts
+            });
+        } catch (error) {
+            console.error('Error getting random products:', error);
+            res.status(500).json({
+                success: false,
+                message: 'Lỗi khi lấy sản phẩm ngẫu nhiên',
+                error: error.message
+            });
+        }
+    }
+
+    // [GET] /products/search
+    async searchProducts(req, res) {
+        try {
+            const { keyword } = req.query;
+
+            if (!keyword || keyword.trim() === '') {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Vui lòng nhập từ khóa tìm kiếm'
+                });
+            }
+            const query = {
+                name: { $regex: keyword, $options: 'i' },
+                is_active: true
+            };
+
+            const searchResults = await Product.find(query)
+                .select('name price thumbnail images slug category_id has_variants variants')
+                .limit(20);
+
+            res.json({
+                success: true,
+                count: searchResults.length,
+                data: searchResults
+            });
+
+        } catch (error) {
+            console.error('Error searching products:', error);
+            res.status(500).json({
+                success: false,
+                message: 'Lỗi khi tìm kiếm sản phẩm',
+                error: error.message
+            });
+        }
+    }
+
+    // [GET] /products
+    async getProducts(req, res) {
+        try {
+            const {
+                page = 1,
+                limit = 12,
+                category,
+                minPrice,
+                maxPrice,
+                size,
+                color,
+                sort = 'createdAt',
+                order = 'desc'
+            } = req.query;
+
+            const query = { is_active: true };
+
+            if (category) {
+                query.category_id = category;
+            }
+
+            if (minPrice || maxPrice) {
+                query.price = {};
+                if (minPrice) query.price.$gte = Number(minPrice);
+                if (maxPrice) query.price.$lte = Number(maxPrice);
+            }
+
+            if (size) {
+                query['variants.sizes.size'] = size;
+            }
+
+            if (color) {
+                query['variants.color'] = color;
+            }
+
+            const sortObj = {};
+            sortObj[sort] = order === 'asc' ? 1 : -1;
+
+            const skip = (page - 1) * limit;
+
+            const products = await Product.find(query)
+                .select('name price thumbnail images slug category_id has_variants variants')
+                .populate('category_id', 'name')
+                .sort(sortObj)
+                .skip(skip)
+                .limit(Number(limit));
+
+            const total = await Product.countDocuments(query);
+
+            res.json({
+                success: true,
+                data: products,
+                pagination: {
+                    page: Number(page),
+                    limit: Number(limit),
+                    total,
+                    totalPages: Math.ceil(total / limit)
+                }
+            });
+
+        } catch (error) {
+            console.error('Error getting products:', error);
+            res.status(500).json({
+                success: false,
+                message: 'Lỗi khi lấy danh sách sản phẩm',
+                error: error.message
+            });
+        }
+    }
+
+    // [GET] /products/filter-options
+    async getFilterOptions(req, res) {
+        try {
+            const products = await Product.find({
+                is_active: true,
+                has_variants: true
+            }).select('variants');
+
+            const sizes = new Set();
+            const colors = new Set();
+
+            products.forEach(product => {
+                product.variants.forEach(variant => {
+                    colors.add(JSON.stringify({
+                        name: variant.color,
+                        code: variant.color_code
+                    }));
+                    variant.sizes.forEach(size => {
+                        sizes.add(size.size);
+                    });
+                });
+            });
+
+            res.json({
+                success: true,
+                data: {
+                    sizes: Array.from(sizes).sort(),
+                    colors: Array.from(colors).map(c => JSON.parse(c))
+                }
+            });
+
+        } catch (error) {
+            console.error('Error getting filter options:', error);
+            res.status(500).json({
+                success: false,
+                message: 'Lỗi khi lấy options filter',
+                error: error.message
+            });
+        }
+    }
 }
 module.exports = new ProductsController();

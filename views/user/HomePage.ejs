@@ -10,7 +10,7 @@
     include('../partials/user/Search') %> <%- include('../partials/user/Header')
     %>
 
-    <!-- render ra cac item con cate -->
+    <!-- cate -->
     <section id="billboard" class="bg-light py-5">
       <div class="container">
         <div class="row justify-content-center">
@@ -51,7 +51,7 @@
       </div>
     </section>
 
-    <!-- render ra san pham moi nhat -->
+    <!-- san pham mới -->
     <section
       id="new-arrival"
       class="new-arrival product-carousel py-5 position-relative overflow-hidden"
@@ -64,7 +64,7 @@
           <a href="index.html" class="btn-link">Xem tất cả sản phẩm</a>
         </div>
         <div class="swiper product-swiper open-up" data-aos="zoom-out">
-          <div class="swiper-wrapper d-flex"></div>
+          <div class="swiper-wrapper d-flex" id="new-arrival-wrapper"></div>
           <div class="swiper-pagination"></div>
         </div>
         <div class="icon-arrow icon-arrow-left">
@@ -84,7 +84,7 @@
       <div class="container">
         <div class="row">
           <div class="title-xlarge text-uppercase txt-fx domino">
-            Collection
+            Bộ sưu tập
           </div>
           <div class="collection-item d-flex flex-wrap my-5">
             <div class="col-md-6 column-container">
@@ -99,19 +99,18 @@
             <div class="col-md-6 column-container bg-white">
               <div class="collection-content p-5 m-0 m-md-5">
                 <h3 class="element-title text-uppercase">
-                  Classic winter collection
+                  Bộ sưu tập mùa đông cổ điển
                 </h3>
                 <p>
-                  Dignissim lacus, turpis ut suspendisse vel tellus. Turpis
-                  purus, gravida orci, fringilla a. Ac sed eu fringilla odio mi.
-                  Consequat pharetra at magna imperdiet cursus ac faucibus sit
-                  libero. Ultricies quam nunc, lorem sit lorem urna, pretium
-                  aliquam ut. In vel, quis donec dolor id in. Pulvinar commodo
-                  mollis diam sed facilisis at cursus imperdiet cursus ac
-                  faucibus sit faucibus sit libero.
+                  Khám phá vẻ đẹp sang trọng và ấm áp với những thiết kế mới
+                  nhất của chúng tôi. Chất liệu cao cấp cùng đường may tinh tế
+                  mang lại sự thoải mái tối đa trong mùa đông lạnh giá. Hãy để
+                  phong cách của bạn tỏa sáng ngay cả trong những ngày u ám
+                  nhất. Một sự kết hợp hoàn hảo giữa nét cổ điển và hiện đại
+                  dành riêng cho bạn.
                 </p>
                 <a href="#" class="btn btn-dark text-uppercase mt-3"
-                  >Shop Collection</a
+                  >Xem bộ sưu tập</a
                 >
               </div>
             </div>
@@ -120,6 +119,7 @@
       </div>
     </section>
 
+    <!-- san pham ban chay -->
     <section
       id="best-sellers"
       class="best-sellers product-carousel py-5 position-relative overflow-hidden"
@@ -128,186 +128,11 @@
         <div
           class="d-flex flex-wrap justify-content-between align-items-center mt-5 mb-3"
         >
-          <h4 class="text-uppercase">Best Selling Items</h4>
-          <a href="index.html" class="btn-link">View All Products</a>
+          <h4 class="text-uppercase">Sản phẩm bán chạy</h4>
+          <a href="index.html" class="btn-link">Xem tất cả</a>
         </div>
         <div class="swiper product-swiper open-up" data-aos="zoom-out">
-          <div class="swiper-wrapper d-flex">
-            <div class="swiper-slide">
-              <div class="product-item image-zoom-effect link-effect">
-                <div class="image-holder">
-                  <a href="index.html">
-                    <img
-                      src="images/product-item-4.jpg"
-                      alt="categories"
-                      class="product-image img-fluid"
-                    />
-                  </a>
-                  <a href="index.html" class="btn-icon btn-wishlist">
-                    <svg width="24" height="24" viewBox="0 0 24 24">
-                      <use xlink:href="#heart"></use>
-                    </svg>
-                  </a>
-                  <div class="product-content">
-                    <h5 class="text-uppercase fs-5 mt-3">
-                      <a href="index.html">Dark florish onepiece</a>
-                    </h5>
-                    <a
-                      href="index.html"
-                      class="text-decoration-none"
-                      data-after="Add to cart"
-                      ><span>$95.00</span></a
-                    >
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="swiper-slide">
-              <div class="product-item image-zoom-effect link-effect">
-                <div class="image-holder">
-                  <a href="index.html">
-                    <img
-                      src="images/product-item-3.jpg"
-                      alt="product"
-                      class="product-image img-fluid"
-                    />
-                  </a>
-                  <a href="index.html" class="btn-icon btn-wishlist">
-                    <svg width="24" height="24" viewBox="0 0 24 24">
-                      <use xlink:href="#heart"></use>
-                    </svg>
-                  </a>
-                  <div class="product-content">
-                    <h5 class="text-uppercase fs-5 mt-3">
-                      <a href="index.html">Baggy Shirt</a>
-                    </h5>
-                    <a
-                      href="index.html"
-                      class="text-decoration-none"
-                      data-after="Add to cart"
-                      ><span>$55.00</span></a
-                    >
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="swiper-slide">
-              <div class="product-item image-zoom-effect link-effect">
-                <div class="image-holder">
-                  <a href="index.html">
-                    <img
-                      src="images/product-item-5.jpg"
-                      alt="categories"
-                      class="product-image img-fluid"
-                    />
-                  </a>
-                  <a href="index.html" class="btn-icon btn-wishlist">
-                    <svg width="24" height="24" viewBox="0 0 24 24">
-                      <use xlink:href="#heart"></use>
-                    </svg>
-                  </a>
-                  <div class="product-content">
-                    <h5 class="text-uppercase fs-5 mt-3">
-                      <a href="index.html">Cotton off-white shirt</a>
-                    </h5>
-                    <a
-                      href="index.html"
-                      class="text-decoration-none"
-                      data-after="Add to cart"
-                      ><span>$65.00</span></a
-                    >
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="swiper-slide">
-              <div class="product-item image-zoom-effect link-effect">
-                <div class="image-holder">
-                  <a href="index.html">
-                    <img
-                      src="images/product-item-6.jpg"
-                      alt="categories"
-                      class="product-image img-fluid"
-                    />
-                  </a>
-                  <a href="index.html" class="btn-icon btn-wishlist">
-                    <svg width="24" height="24" viewBox="0 0 24 24">
-                      <use xlink:href="#heart"></use>
-                    </svg>
-                  </a>
-                  <div class="product-content">
-                    <h5 class="text-uppercase fs-5 mt-3">
-                      <a href="index.html">Handmade crop sweater</a>
-                    </h5>
-                    <a
-                      href="index.html"
-                      class="text-decoration-none"
-                      data-after="Add to cart"
-                      ><span>$50.00</span></a
-                    >
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="swiper-slide">
-              <div class="product-item image-zoom-effect link-effect">
-                <div class="image-holder">
-                  <a href="index.html">
-                    <img
-                      src="images/product-item-9.jpg"
-                      alt="categories"
-                      class="product-image img-fluid"
-                    />
-                  </a>
-                  <a href="index.html" class="btn-icon btn-wishlist">
-                    <svg width="24" height="24" viewBox="0 0 24 24">
-                      <use xlink:href="#heart"></use>
-                    </svg>
-                  </a>
-                  <div class="product-content">
-                    <h5 class="text-uppercase fs-5 mt-3">
-                      <a href="index.html">Dark florish onepiece</a>
-                    </h5>
-                    <a
-                      href="index.html"
-                      class="text-decoration-none"
-                      data-after="Add to cart"
-                      ><span>$70.00</span></a
-                    >
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="swiper-slide">
-              <div class="product-item image-zoom-effect link-effect">
-                <div class="image-holder">
-                  <a href="index.html">
-                    <img
-                      src="images/product-item-10.jpg"
-                      alt="categories"
-                      class="product-image img-fluid"
-                    />
-                  </a>
-                  <a href="index.html" class="btn-icon btn-wishlist">
-                    <svg width="24" height="24" viewBox="0 0 24 24">
-                      <use xlink:href="#heart"></use>
-                    </svg>
-                  </a>
-                  <div class="product-content">
-                    <h5 class="text-uppercase fs-5 mt-3">
-                      <a href="index.html">Cotton off-white shirt</a>
-                    </h5>
-                    <a
-                      href="index.html"
-                      class="text-decoration-none"
-                      data-after="Add to cart"
-                      ><span>$70.00</span></a
-                    >
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <div class="swiper-wrapper d-flex" id="best-sellers-wrapper"></div>
           <div class="swiper-pagination"></div>
         </div>
         <div class="icon-arrow icon-arrow-left">
@@ -328,16 +153,32 @@
         <div class="row">
           <div class="video-content open-up" data-aos="zoom-out">
             <div class="video-bg">
-              <img
-                src="images/video-image.jpg"
-                alt="video"
+              <video
                 class="video-image img-fluid"
-              />
+                loop
+                muted
+                playsinline
+                autoplay
+                style="width: 100%; height: 100%; object-fit: cover"
+              >
+                <source
+                  type="video/mp4; codecs=hvc1"
+                  src="https://www.chanel.com/videos/e_volume:mute/q_90,f_mp4,vc_h265,c_scale,w_1920,c_limit/FSH-1742825419072-mobile-headerjennie.mp4"
+                />
+                <source
+                  type="video/webm; codecs=vp9"
+                  src="https://www.chanel.com/videos/e_volume:mute/q_90,f_webm,vc_vp9,c_scale,w_1920,c_limit/FSH-1742825419072-mobile-headerjennie.webm"
+                />
+                <source
+                  type="video/mp4"
+                  src="https://www.chanel.com/videos/e_volume:mute/q_90,f_mp4,c_scale,w_1920,c_limit/FSH-1742825419072-mobile-headerjennie.mp4"
+                />
+              </video>
             </div>
             <div class="video-player">
               <a
                 class="youtube"
-                href="https://www.youtube.com/embed/pjtsGzQjFM4"
+                href="https://youtu.be/pkhwaWMIeZA?si=r2vM4_I_vqgHaIld"
               >
                 <svg width="24" height="24" viewBox="0 0 24 24">
                   <use xlink:href="#play"></use>
@@ -354,63 +195,7 @@
       </div>
     </section>
 
-    <section class="testimonials py-5 bg-light">
-      <div class="section-header text-center mt-5">
-        <h3 class="section-title">WE LOVE GOOD COMPLIMENT</h3>
-      </div>
-      <div class="swiper testimonial-swiper overflow-hidden my-5">
-        <div class="swiper-wrapper d-flex">
-          <div class="swiper-slide">
-            <div class="testimonial-item text-center">
-              <blockquote>
-                <p>
-                  “More than expected crazy soft, flexible and best fitted white
-                  simple denim shirt.”
-                </p>
-                <div class="review-title text-uppercase">casual way</div>
-              </blockquote>
-            </div>
-          </div>
-          <div class="swiper-slide">
-            <div class="testimonial-item text-center">
-              <blockquote>
-                <p>
-                  “Best fitted white denim shirt more than expected crazy soft,
-                  flexible
-                </p>
-                <div class="review-title text-uppercase">uptop</div>
-              </blockquote>
-            </div>
-          </div>
-          <div class="swiper-slide">
-            <div class="testimonial-item text-center">
-              <blockquote>
-                <p>
-                  “Best fitted white denim shirt more white denim than expected
-                  flexible crazy soft.”
-                </p>
-                <div class="review-title text-uppercase">Denim craze</div>
-              </blockquote>
-            </div>
-          </div>
-          <div class="swiper-slide">
-            <div class="testimonial-item text-center">
-              <blockquote>
-                <p>
-                  “Best fitted white denim shirt more than expected crazy soft,
-                  flexible
-                </p>
-                <div class="review-title text-uppercase">uptop</div>
-              </blockquote>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div
-        class="testimonial-swiper-pagination d-flex justify-content-center mb-5"
-      ></div>
-    </section>
-
+    <!-- co the bạn thich -->
     <section
       id="related-products"
       class="related-products product-carousel py-5 position-relative overflow-hidden"
@@ -419,157 +204,14 @@
         <div
           class="d-flex flex-wrap justify-content-between align-items-center mt-5 mb-3"
         >
-          <h4 class="text-uppercase">You May Also Like</h4>
-          <a href="index.html" class="btn-link">View All Products</a>
+          <h4 class="text-uppercase">Có thể bạn thích</h4>
+          <a href="index.html" class="btn-link">Xem tất cả sản phẩm</a>
         </div>
         <div class="swiper product-swiper open-up" data-aos="zoom-out">
-          <div class="swiper-wrapper d-flex">
-            <div class="swiper-slide">
-              <div class="product-item image-zoom-effect link-effect">
-                <div class="image-holder">
-                  <a href="index.html">
-                    <img
-                      src="images/product-item-5.jpg"
-                      alt="product"
-                      class="product-image img-fluid"
-                    />
-                  </a>
-                  <a href="index.html" class="btn-icon btn-wishlist">
-                    <svg width="24" height="24" viewBox="0 0 24 24">
-                      <use xlink:href="#heart"></use>
-                    </svg>
-                  </a>
-                  <div class="product-content">
-                    <h5 class="text-uppercase fs-5 mt-3">
-                      <a href="index.html">Dark florish onepiece</a>
-                    </h5>
-                    <a
-                      href="index.html"
-                      class="text-decoration-none"
-                      data-after="Add to cart"
-                      ><span>$95.00</span></a
-                    >
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="swiper-slide">
-              <div class="product-item image-zoom-effect link-effect">
-                <div class="image-holder">
-                  <a href="index.html">
-                    <img
-                      src="images/product-item-6.jpg"
-                      alt="product"
-                      class="product-image img-fluid"
-                    />
-                  </a>
-                  <a href="index.html" class="btn-icon btn-wishlist">
-                    <svg width="24" height="24" viewBox="0 0 24 24">
-                      <use xlink:href="#heart"></use>
-                    </svg>
-                  </a>
-                  <div class="product-content">
-                    <h5 class="text-uppercase fs-5 mt-3">
-                      <a href="index.html">Baggy Shirt</a>
-                    </h5>
-                    <a
-                      href="index.html"
-                      class="text-decoration-none"
-                      data-after="Add to cart"
-                      ><span>$55.00</span></a
-                    >
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="swiper-slide">
-              <div class="product-item image-zoom-effect link-effect">
-                <div class="image-holder">
-                  <a href="index.html">
-                    <img
-                      src="images/product-item-7.jpg"
-                      alt="product"
-                      class="product-image img-fluid"
-                    />
-                  </a>
-                  <a href="index.html" class="btn-icon btn-wishlist">
-                    <svg width="24" height="24" viewBox="0 0 24 24">
-                      <use xlink:href="#heart"></use>
-                    </svg>
-                  </a>
-                  <div class="product-content">
-                    <h5 class="text-uppercase fs-5 mt-3">
-                      <a href="index.html">Cotton off-white shirt</a>
-                    </h5>
-                    <a
-                      href="index.html"
-                      class="text-decoration-none"
-                      data-after="Add to cart"
-                      ><span>$65.00</span></a
-                    >
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="swiper-slide">
-              <div class="product-item image-zoom-effect link-effect">
-                <div class="image-holder">
-                  <a href="index.html">
-                    <img
-                      src="images/product-item-8.jpg"
-                      alt="product"
-                      class="product-image img-fluid"
-                    />
-                  </a>
-                  <a href="index.html" class="btn-icon btn-wishlist">
-                    <svg width="24" height="24" viewBox="0 0 24 24">
-                      <use xlink:href="#heart"></use>
-                    </svg>
-                  </a>
-                  <div class="product-content">
-                    <h5 class="text-uppercase fs-5 mt-3">
-                      <a href="index.html">Handmade crop sweater</a>
-                    </h5>
-                    <a
-                      href="index.html"
-                      class="text-decoration-none"
-                      data-after="Add to cart"
-                      ><span>$50.00</span></a
-                    >
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="swiper-slide">
-              <div class="product-item image-zoom-effect link-effect">
-                <div class="image-holder">
-                  <a href="index.html">
-                    <img
-                      src="images/product-item-1.jpg"
-                      alt="product"
-                      class="product-image img-fluid"
-                    />
-                  </a>
-                  <a href="index.html" class="btn-icon btn-wishlist">
-                    <svg width="24" height="24" viewBox="0 0 24 24">
-                      <use xlink:href="#heart"></use>
-                    </svg>
-                  </a>
-                  <div class="product-content">
-                    <h5 class="text-uppercase fs-5 mt-3">
-                      <a href="index.html">Handmade crop sweater</a>
-                    </h5>
-                    <a
-                      href="index.html"
-                      class="text-decoration-none"
-                      data-after="Add to cart"
-                      ><span>$70.00</span></a
-                    >
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <div
+            class="swiper-wrapper d-flex"
+            id="related-products-wrapper"
+          ></div>
           <div class="swiper-pagination"></div>
         </div>
         <div class="icon-arrow icon-arrow-left">
@@ -585,550 +227,9 @@
       </div>
     </section>
 
-    <section class="blog py-5">
-      <div class="container">
-        <div
-          class="d-flex flex-wrap justify-content-between align-items-center mt-5 mb-3"
-        >
-          <h4 class="text-uppercase">Read Blog Posts</h4>
-          <a href="index.html" class="btn-link">View All</a>
-        </div>
-        <div class="row">
-          <div class="col-md-4">
-            <article class="post-item">
-              <div class="post-image">
-                <a href="index.html">
-                  <img
-                    src="images/post-image1.jpg"
-                    alt="image"
-                    class="post-grid-image img-fluid"
-                  />
-                </a>
-              </div>
-              <div class="post-content d-flex flex-wrap gap-2 my-3">
-                <div class="post-meta text-uppercase fs-6 text-secondary">
-                  <span class="post-category">Fashion /</span>
-                  <span class="meta-day"> jul 11, 2022</span>
-                </div>
-                <h5 class="post-title text-uppercase">
-                  <a href="index.html">How to look outstanding in pastel</a>
-                </h5>
-                <p>
-                  Dignissim lacus,turpis ut suspendisse vel tellus.Turpis
-                  purus,gravida orci,fringilla...
-                </p>
-              </div>
-            </article>
-          </div>
-          <div class="col-md-4">
-            <article class="post-item">
-              <div class="post-image">
-                <a href="index.html">
-                  <img
-                    src="images/post-image2.jpg"
-                    alt="image"
-                    class="post-grid-image img-fluid"
-                  />
-                </a>
-              </div>
-              <div class="post-content d-flex flex-wrap gap-2 my-3">
-                <div class="post-meta text-uppercase fs-6 text-secondary">
-                  <span class="post-category">Fashion /</span>
-                  <span class="meta-day"> jul 11, 2022</span>
-                </div>
-                <h5 class="post-title text-uppercase">
-                  <a href="index.html">Top 10 fashion trend for summer</a>
-                </h5>
-                <p>
-                  Turpis purus, gravida orci, fringilla dignissim lacus, turpis
-                  ut suspendisse vel tellus...
-                </p>
-              </div>
-            </article>
-          </div>
-          <div class="col-md-4">
-            <article class="post-item">
-              <div class="post-image">
-                <a href="index.html">
-                  <img
-                    src="images/post-image3.jpg"
-                    alt="image"
-                    class="post-grid-image img-fluid"
-                  />
-                </a>
-              </div>
-              <div class="post-content d-flex flex-wrap gap-2 my-3">
-                <div class="post-meta text-uppercase fs-6 text-secondary">
-                  <span class="post-category">Fashion /</span>
-                  <span class="meta-day"> jul 11, 2022</span>
-                </div>
-                <h5 class="post-title text-uppercase">
-                  <a href="index.html">Crazy fashion with unique moment</a>
-                </h5>
-                <p>
-                  Turpis purus, gravida orci, fringilla dignissim lacus, turpis
-                  ut suspendisse vel tellus...
-                </p>
-              </div>
-            </article>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="logo-bar py-5 my-5">
-      <div class="container">
-        <div class="row">
-          <div class="logo-content d-flex flex-wrap justify-content-between">
-            <img
-              src="/images/logo1.png"
-              alt="logo"
-              class="logo-image img-fluid"
-            />
-            <img
-              src="/images/logo2.png"
-              alt="logo"
-              class="logo-image img-fluid"
-            />
-            <img
-              src="/images/logo3.png"
-              alt="logo"
-              class="logo-image img-fluid"
-            />
-            <img
-              src="/images/logo4.png"
-              alt="logo"
-              class="logo-image img-fluid"
-            />
-            <img
-              src="/images/logo5.png"
-              alt="logo"
-              class="logo-image img-fluid"
-            />
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section
-      class="newsletter bg-light"
-      style="background: url(images/pattern-bg.png) no-repeat"
-    >
-      <div class="container">
-        <div class="row justify-content-center">
-          <div class="col-md-8 py-5 my-5">
-            <div class="subscribe-header text-center pb-3">
-              <h3 class="section-title text-uppercase">
-                Sign Up for our newsletter
-              </h3>
-            </div>
-            <form id="form" class="d-flex flex-wrap gap-2">
-              <input
-                type="text"
-                name="email"
-                placeholder="Your Email Addresss"
-                class="form-control form-control-lg"
-              />
-              <button class="btn btn-dark btn-lg text-uppercase w-100">
-                Sign Up
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="instagram position-relative">
-      <div
-        class="d-flex justify-content-center w-100 position-absolute bottom-0 z-1"
-      >
-        <a
-          href="https://www.instagram.com/templatesjungle/"
-          class="btn btn-dark px-5"
-          >Follow us on Instagram</a
-        >
-      </div>
-      <div class="row g-0">
-        <div class="col-6 col-sm-4 col-md-2">
-          <div class="insta-item">
-            <a
-              href="https://www.instagram.com/templatesjungle/"
-              target="_blank"
-            >
-              <img
-                src="images/insta-item1.jpg"
-                alt="instagram"
-                class="insta-image img-fluid"
-              />
-            </a>
-          </div>
-        </div>
-        <div class="col-6 col-sm-4 col-md-2">
-          <div class="insta-item">
-            <a
-              href="https://www.instagram.com/templatesjungle/"
-              target="_blank"
-            >
-              <img
-                src="images/insta-item2.jpg"
-                alt="instagram"
-                class="insta-image img-fluid"
-              />
-            </a>
-          </div>
-        </div>
-        <div class="col-6 col-sm-4 col-md-2">
-          <div class="insta-item">
-            <a
-              href="https://www.instagram.com/templatesjungle/"
-              target="_blank"
-            >
-              <img
-                src="images/insta-item3.jpg"
-                alt="instagram"
-                class="insta-image img-fluid"
-              />
-            </a>
-          </div>
-        </div>
-        <div class="col-6 col-sm-4 col-md-2">
-          <div class="insta-item">
-            <a
-              href="https://www.instagram.com/templatesjungle/"
-              target="_blank"
-            >
-              <img
-                src="images/insta-item4.jpg"
-                alt="instagram"
-                class="insta-image img-fluid"
-              />
-            </a>
-          </div>
-        </div>
-        <div class="col-6 col-sm-4 col-md-2">
-          <div class="insta-item">
-            <a
-              href="https://www.instagram.com/templatesjungle/"
-              target="_blank"
-            >
-              <img
-                src="images/insta-item5.jpg"
-                alt="instagram"
-                class="insta-image img-fluid"
-              />
-            </a>
-          </div>
-        </div>
-        <div class="col-6 col-sm-4 col-md-2">
-          <div class="insta-item">
-            <a
-              href="https://www.instagram.com/templatesjungle/"
-              target="_blank"
-            >
-              <img
-                src="images/insta-item6.jpg"
-                alt="instagram"
-                class="insta-image img-fluid"
-              />
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-
     <%- include('../partials/user/Footer')%> <%-
     include('../partials/user/Script')%>
 
-    <script>
-      $(document).ready(function () {
-        const $childrenCategoriesSlider = $("#childrenCategoriesSlider");
-        const $arrowLeft = $(".icon-arrow-left");
-        const $arrowRight = $(".icon-arrow-right");
-        const $swiperPagination = $(".swiper-pagination");
-
-        function fetchAllChildrenCategories() {
-          $.ajax({
-            url: "/categories/all-children",
-            method: "GET",
-            dataType: "json",
-            success: function (data) {
-              if (data.success) {
-                renderChildrenCategories(
-                  data.categories,
-                  $childrenCategoriesSlider
-                );
-
-                const numberOfCategories = data.categories.length;
-
-                let swiperConfig = {
-                  loop: true,
-                  navigation: {
-                    nextEl: ".icon-arrow-right",
-                    prevEl: ".icon-arrow-left",
-                  },
-                  pagination: {
-                    el: ".swiper-pagination",
-                    clickable: true,
-                  },
-                  breakpoints: {
-                    0: { slidesPerView: 1, spaceBetween: 10 },
-                    768: { slidesPerView: 2, spaceBetween: 20 },
-                    992: { slidesPerView: 3, spaceBetween: 30 },
-                  },
-                };
-
-                if (numberOfCategories < 4) {
-                  swiperConfig.loop = false;
-                  swiperConfig.navigation = false;
-                  swiperConfig.pagination = false;
-
-                  $arrowLeft.hide();
-                  $arrowRight.hide();
-                  $swiperPagination.hide();
-
-                  if (numberOfCategories > 0) {
-                    swiperConfig.breakpoints["992"].slidesPerView =
-                      numberOfCategories;
-                    swiperConfig.breakpoints["768"].slidesPerView =
-                      numberOfCategories >= 2 ? 2 : numberOfCategories;
-                  }
-                } else {
-                  $arrowLeft.show();
-                  $arrowRight.show();
-                  $swiperPagination.show();
-                }
-
-                if (window.mainSwiperInstance) {
-                  window.mainSwiperInstance.destroy(true, true);
-                }
-
-                if (typeof Swiper !== "undefined") {
-                  window.mainSwiperInstance = new Swiper(
-                    ".main-swiper",
-                    swiperConfig
-                  );
-                }
-              } else {
-                console.error("API trả lỗi:", data.message);
-              }
-            },
-            error: function (xhr) {
-              console.error("Fetch failed:", xhr);
-            },
-          });
-        }
-
-        function renderChildrenCategories(categories, $parent) {
-          $parent.empty();
-
-          if (categories.length === 0) {
-            $parent.html(
-              '<p class="text-center w-100">Không có danh mục con nào để hiển thị.</p>'
-            );
-            $arrowLeft.hide();
-            $arrowRight.hide();
-            $swiperPagination.hide();
-            return;
-          }
-
-          categories.forEach((category) => {
-            const parentName = category.parent_id
-              ? `Từ: ${category.parent_id.name}`
-              : "";
-
-            const description =
-              category.description ||
-              parentName ||
-              "Mô tả ngắn gọn về danh mục.";
-
-            const slide = `
-          <div class="swiper-slide">
-            <div class="banner-item image-zoom-effect">
-              
-              <div class="image-holder">
-                <a href="/category/${category.slug}">
-                  <img 
-                    src="${category.banner_url || "/images/placeholder.jpg"}"
-                    alt="${category.name}"
-                    class="img-fluid"
-                  />
-                </a>
-              </div>
-
-              <div class="banner-content py-4">
-                <h5 class="element-title text-uppercase">
-                  <a class="item-anchor" href="/category/${category.slug}">
-                    ${category.name}
-                  </a>
-                </h5>
-
-                <p>${description}</p>
-
-                <div class="btn-left">
-                  <a 
-                    href="/category/${category.slug}"
-                    class="btn-link fs-6 text-uppercase item-anchor text-decoration-none"
-                  >
-                    Khám Phá Ngay
-                  </a>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        `;
-
-            $parent.append(slide);
-          });
-        }
-
-        fetchAllChildrenCategories();
-      });
-
-      let productSwiper = null;
-
-      loadLatestProducts();
-
-      function loadLatestProducts() {
-        $.ajax({
-          url: "/products/latest",
-          method: "GET",
-          dataType: "json",
-          success: function (response) {
-            if (response.success) {
-              displayProducts(response.products);
-            }
-          },
-          error: function (xhr, status, error) {
-            console.error("Lỗi khi tải sản phẩm:", error);
-            $(".product-swiper .swiper-wrapper").html(
-              '<p class="text-center">Không thể tải sản phẩm</p>'
-            );
-          },
-        });
-      }
-
-      function displayProducts(products) {
-        const $swiperWrapper = $(".product-swiper .swiper-wrapper");
-        $swiperWrapper.empty();
-
-        $.each(products, function (index, product) {
-          let imageUrl = "images/default-product.jpg";
-          if (product.thumbnail) {
-            imageUrl = product.thumbnail;
-          } else if (product.images && product.images.length > 0) {
-            imageUrl = product.images[0];
-          }
-
-          let displayPrice = 0;
-
-          if (product.price !== undefined && product.price !== null) {
-            displayPrice = product.price;
-          } else if (
-            product.has_variants &&
-            product.variants &&
-            product.variants.length > 0
-          ) {
-            let minPrice = Infinity;
-            product.variants.forEach((variant) => {
-              if (variant.sizes && variant.sizes.length > 0) {
-                variant.sizes.forEach((size) => {
-                  if (size.price < minPrice) minPrice = size.price;
-                });
-              }
-            });
-            displayPrice = minPrice === Infinity ? 0 : minPrice;
-          }
-
-          const formattedPrice = new Intl.NumberFormat("vi-VN", {
-            style: "currency",
-            currency: "VND",
-          }).format(displayPrice);
-
-          const productHTML = `
-        <div class="swiper-slide">
-            <div class="product-item image-zoom-effect link-effect">
-                <div class="image-holder position-relative">
-                    <a href="/product-detail?id=${product._id}">
-                        <img
-                            src="${imageUrl}"
-                            alt="${product.name}"
-                            class="product-image img-fluid"
-                            onerror="this.src='images/default-product.jpg'"
-                        />
-                    </a>
-                    <a href="javascript:void(0)" class="btn-icon btn-wishlist" data-id="${product._id}">
-                        <svg width="24" height="24" viewBox="0 0 24 24">
-                            <use xlink:href="#heart"></use>
-                        </svg>
-                    </a>
-                    <div class="product-content">
-                        <h5 class="element-title text-uppercase fs-5 mt-3">
-                            <a href="product-detail.html?id=${product._id}">${product.name}</a>
-                        </h5>
-                        <a href="javascript:void(0)" 
-                           class="text-decoration-none add-to-cart" 
-                           data-id="${product._id}"
-                           data-after="Add to cart">
-                            <span>${formattedPrice}</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-      `;
-
-          $swiperWrapper.append(productHTML);
-        });
-
-        initSwiper();
-      }
-
-      function initSwiper() {
-        if (typeof Swiper !== "undefined") {
-          if (productSwiper) {
-            productSwiper.destroy(true, true);
-          }
-
-          productSwiper = new Swiper(".product-swiper", {
-            slidesPerView: 4,
-            spaceBetween: 30,
-            pagination: {
-              el: ".swiper-pagination",
-              clickable: true,
-            },
-            navigation: {
-              nextEl: ".icon-arrow-right",
-              prevEl: ".icon-arrow-left",
-            },
-            breakpoints: {
-              320: { slidesPerView: 1, spaceBetween: 10 },
-              640: { slidesPerView: 2, spaceBetween: 20 },
-              1024: { slidesPerView: 4, spaceBetween: 30 },
-            },
-          });
-        }
-      }
-
-      $(document).on("click", ".add-to-cart", function (e) {
-        e.preventDefault();
-        const productId = $(this).data("id");
-        addToCart(productId);
-      });
-
-      $(document).on("click", ".btn-wishlist", function (e) {
-        e.preventDefault();
-        const productId = $(this).data("id");
-        addToWishlist(productId);
-      });
-
-      function addToCart(productId) {
-        console.log("Thêm sản phẩm vào giỏ:", productId);
-      }
-
-      function addToWishlist(productId) {
-        console.log("Thêm vào wishlist:", productId);
-      }
-    </script>
+    <script src="/js/home_page.js"></script>
   </body>
 </html>

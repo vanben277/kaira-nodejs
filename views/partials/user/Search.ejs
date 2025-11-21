@@ -1,42 +1,59 @@
 <div class="preloader text-white fs-6 text-uppercase overflow-hidden"></div>
-
 <div class="search-popup">
-    <div class="search-popup-container">
+  <div class="search-popup-container">
+    <!-- Thêm id="search-box" để JS dễ bắt sự kiện -->
+    <form
+      role="search"
+      method="get"
+      class="form-group"
+      id="search-box"
+      action=""
+    >
+      <input
+        type="search"
+        id="search-form"
+        class="form-control border-0 border-bottom"
+        placeholder="Nhập tên sản phẩm..."
+        value=""
+        name="s"
+        autocomplete="off"
+      />
+      <button
+        type="submit"
+        class="search-submit border-0 position-absolute bg-white"
+        style="top: 15px; right: 15px"
+      >
+        <svg class="search" width="24" height="24">
+          <use xlink:href="#search"></use>
+        </svg>
+      </button>
+    </form>
 
-        <form role="search" method="get" class="form-group" action="">
-            <input type="search" id="search-form" class="form-control border-0 border-bottom"
-                placeholder="Type and press enter" value="" name="s" />
-            <button type="submit" class="search-submit border-0 position-absolute bg-white"
-                style="top: 15px;right: 15px;"><svg class="search" width="24" height="24">
-                    <use xlink:href="#search"></use>
-                </svg></button>
-        </form>
-
-        <h5 class="cat-list-title">Browse Categories</h5>
-
-        <ul class="cat-list">
-            <li class="cat-list-item">
-                <a href="#" title="Jackets">Jackets</a>
-            </li>
-            <li class="cat-list-item">
-                <a href="#" title="T-shirts">T-shirts</a>
-            </li>
-            <li class="cat-list-item">
-                <a href="#" title="Handbags">Handbags</a>
-            </li>
-            <li class="cat-list-item">
-                <a href="#" title="Accessories">Accessories</a>
-            </li>
-            <li class="cat-list-item">
-                <a href="#" title="Cosmetics">Cosmetics</a>
-            </li>
-            <li class="cat-list-item">
-                <a href="#" title="Dresses">Dresses</a>
-            </li>
-            <li class="cat-list-item">
-                <a href="#" title="Jumpsuits">Jumpsuits</a>
-            </li>
-        </ul>
-
+    <div id="search-results-container" class="mt-4" style="display: none">
+      <h5 class="cat-list-title">Kết quả tìm kiếm</h5>
+      <div
+        class="search-results-list"
+        style="max-height: 400px; overflow-y: auto"
+      >
+        <!-- render -->
+      </div>
+      <div class="text-center mt-3 loading-spinner" style="display: none">
+        <div class="spinner-border text-secondary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
     </div>
+
+    <div id="default-categories">
+      <h5 class="cat-list-title">Khám phá danh mục</h5>
+      <ul class="cat-list">
+        <li class="cat-list-item"><a href="#" title="Jackets">Áo khoác</a></li>
+        <li class="cat-list-item"><a href="#" title="T-shirts">Áo thun</a></li>
+        <li class="cat-list-item"><a href="#" title="Handbags">Túi xách</a></li>
+        <li class="cat-list-item">
+          <a href="#" title="Accessories">Phụ kiện</a>
+        </li>
+      </ul>
+    </div>
+  </div>
 </div>

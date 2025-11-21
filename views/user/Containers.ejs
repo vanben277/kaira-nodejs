@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <title>Cửa hàng - Kaira</title>
+    <%- include('../partials/user/Head') %>
+    <link rel="stylesheet" href="/css/containers.css" />
+  </head>
+
+  <body>
+    <%- include('../partials/user/SVGIcon') %> <%-
+    include('../partials/user/Search') %> <%- include('../partials/user/Header')
+    %>
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="container">
+        <h1>Sản Phẩm</h1>
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/">Trang Chủ</a></li>
+            <span>/</span>
+            <li class="breadcrumb-item active">Sản Phẩm</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Products Section -->
+    <section class="products py-5">
+      <div class="container">
+        <div class="row">
+          <!-- Filter Sidebar -->
+          <div class="col-lg-3">
+            <button class="mobile-filter-btn" onclick="toggleFilters()">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                style="margin-right: 8px"
+              >
+                <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z" />
+              </svg>
+              Bộ Lọc
+            </button>
+
+            <div class="filter-sidebar" id="filterSidebar">
+              <!-- Category Filter -->
+              <div class="filter-section">
+                <h5 class="filter-title">Danh Mục</h5>
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="cat1"
+                    checked
+                  />
+                  <label class="form-check-label" for="cat1"
+                    >Áo Thun (45)</label
+                  >
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="cat2" />
+                  <label class="form-check-label" for="cat2"
+                    >Áo Sơ Mi (32)</label
+                  >
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="cat3" />
+                  <label class="form-check-label" for="cat3"
+                    >Quần Jean (28)</label
+                  >
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="cat4" />
+                  <label class="form-check-label" for="cat4"
+                    >Áo Khoác (21)</label
+                  >
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="cat5" />
+                  <label class="form-check-label" for="cat5">Váy (18)</label>
+                </div>
+              </div>
+
+              <!-- Price Filter -->
+              <div class="filter-section">
+                <h5 class="filter-title">Khoảng Giá</h5>
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="price"
+                    id="price1"
+                  />
+                  <label class="form-check-label" for="price1"
+                    >Dưới 200.000đ</label
+                  >
+                </div>
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="price"
+                    id="price2"
+                  />
+                  <label class="form-check-label" for="price2"
+                    >200.000đ - 500.000đ</label
+                  >
+                </div>
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="price"
+                    id="price3"
+                  />
+                  <label class="form-check-label" for="price3"
+                    >500.000đ - 1.000.000đ</label
+                  >
+                </div>
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="price"
+                    id="price4"
+                  />
+                  <label class="form-check-label" for="price4"
+                    >Trên 1.000.000đ</label
+                  >
+                </div>
+                <div class="price-inputs">
+                  <input type="number" placeholder="Từ" class="form-control" />
+                  <input type="number" placeholder="Đến" class="form-control" />
+                </div>
+              </div>
+
+              <!-- Size Filter -->
+              <div class="filter-section">
+                <h5 class="filter-title">Kích Thước</h5>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="size1" />
+                  <label class="form-check-label" for="size1">S</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="size2" />
+                  <label class="form-check-label" for="size2">M</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="size3" />
+                  <label class="form-check-label" for="size3">L</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="size4" />
+                  <label class="form-check-label" for="size4">XL</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="size5" />
+                  <label class="form-check-label" for="size5">XXL</label>
+                </div>
+              </div>
+
+              <!-- Color Filter -->
+              <div class="filter-section">
+                <h5 class="filter-title">Màu Sắc</h5>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="color1" />
+                  <label class="form-check-label" for="color1">Đen</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="color2" />
+                  <label class="form-check-label" for="color2">Trắng</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="color3" />
+                  <label class="form-check-label" for="color3">Xám</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="color4" />
+                  <label class="form-check-label" for="color4"
+                    >Xanh Dương</label
+                  >
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="color5" />
+                  <label class="form-check-label" for="color5">Đỏ</label>
+                </div>
+              </div>
+
+              <!-- Filter Buttons -->
+              <div class="filter-buttons">
+                <button class="btn-apply-filter">Áp Dụng</button>
+                <button class="btn-reset-filter">Đặt Lại</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Products Grid -->
+          <div class="col-lg-9">
+            <!-- Products Header -->
+            <div class="products-header">
+              <div class="products-count">
+                Hiển thị <strong>1-12</strong> trong <strong>144</strong> sản
+                phẩm
+              </div>
+              <div class="products-controls">
+                <div class="view-toggle">
+                  <button class="view-btn active">
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
+                      <path
+                        d="M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z"
+                      />
+                    </svg>
+                  </button>
+                  <button class="view-btn">
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
+                      <path d="M3 4h18v2H3V4zm0 7h18v2H3v-2zm0 7h18v2H3v-2z" />
+                    </svg>
+                  </button>
+                </div>
+                <select class="sort-select">
+                  <option>Sắp xếp mặc định</option>
+                  <option>Giá: Thấp đến Cao</option>
+                  <option>Giá: Cao đến Thấp</option>
+                  <option>Tên: A-Z</option>
+                  <option>Tên: Z-A</option>
+                  <option>Mới nhất</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="row" id="productsGrid">
+              <!-- Product items will be rendered here by JavaScript -->
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination-wrapper">
+              <nav aria-label="Page navigation">
+                <ul class="pagination">
+                  <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1">
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                      >
+                        <use xlink:href="#arrow-left"></use>
+                      </svg>
+                    </a>
+                  </li>
+                  <li class="page-item active">
+                    <a class="page-link" href="#">1</a>
+                  </li>
+                  <li class="page-item"><a class="page-link" href="#">2</a></li>
+                  <li class="page-item"><a class="page-link" href="#">3</a></li>
+                  <li class="page-item"><a class="page-link" href="#">4</a></li>
+                  <li class="page-item"><a class="page-link" href="#">5</a></li>
+                  <li class="page-item">
+                    <a class="page-link" href="#">
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                      >
+                        <use xlink:href="#arrow-right"></use>
+                      </svg>
+                    </a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <%- include('../partials/user/Footer') %> <%-
+    include('../partials/user/Script') %>
+
+    <script>
+      function toggleFilters() {
+        const sidebar = document.getElementById("filterSidebar");
+        sidebar.classList.toggle("show");
+      }
+
+      const sampleProducts = [
+        {
+          _id: 1,
+          name: "Dark florish onepiece",
+          price: 950000,
+          image: "/images/product-item-4.jpg",
+        },
+        {
+          _id: 2,
+          name: "Baggy Shirt",
+          price: 550000,
+          image: "/images/product-item-3.jpg",
+        },
+        {
+          _id: 3,
+          name: "Cotton off-white shirt",
+          price: 650000,
+          image: "/images/product-item-5.jpg",
+        },
+        {
+          _id: 4,
+          name: "Handmade crop sweater",
+          price: 500000,
+          image: "/images/product-item-6.jpg",
+        },
+        {
+          _id: 5,
+          name: "Classic Denim Jacket",
+          price: 1200000,
+          image: "/images/product-item-9.jpg",
+        },
+        {
+          _id: 6,
+          name: "Slim Fit Jeans",
+          price: 750000,
+          image: "/images/product-item-10.jpg",
+        },
+        {
+          _id: 7,
+          name: "Summer Floral Dress",
+          price: 800000,
+          image: "/images/product-item-1.jpg",
+        },
+        {
+          _id: 8,
+          name: "Basic White Tee",
+          price: 250000,
+          image: "/images/product-item-2.jpg",
+        },
+        {
+          _id: 9,
+          name: "Black Hoodie",
+          price: 600000,
+          image: "/images/product-item-7.jpg",
+        },
+        {
+          _id: 10,
+          name: "Running Shoes",
+          price: 1500000,
+          image: "/images/product-item-8.jpg",
+        },
+        {
+          _id: 11,
+          name: "Vintage Dress",
+          price: 450000,
+          image: "/images/product-item-1.jpg",
+        },
+        {
+          _id: 12,
+          name: "Casual Pants",
+          price: 350000,
+          image: "/images/product-item-3.jpg",
+        },
+      ];
+
+      function renderProducts(products) {
+        const grid = document.getElementById("productsGrid");
+        grid.innerHTML = "";
+
+        products.forEach((product) => {
+          let imageUrl = product.image || "images/default-product.jpg";
+          const formattedPrice = new Intl.NumberFormat("vi-VN", {
+            style: "currency",
+            currency: "VND",
+          }).format(product.price);
+
+          const productHTML = `
+                <div class="col-md-4 col-sm-6 mb-4">
+                    <div class="product-item image-zoom-effect link-effect">
+                        <div class="image-holder position-relative">
+                            <a href="/product-detail?id=${product._id}">
+                                <img
+                                    src="${imageUrl}"
+                                    alt="${product.name}"
+                                    class="product-image img-fluid"
+                                    onerror="this.src='images/default-product.jpg'"
+                                />
+                            </a>
+                            <a href="javascript:void(0)" class="btn-icon btn-wishlist" data-id="${product._id}">
+                                <svg width="24" height="24" viewBox="0 0 24 24">
+                                    <use xlink:href="#heart"></use>
+                                </svg>
+                            </a>
+                            <div class="product-content">
+                                <h5 class="element-title text-uppercase fs-5 mt-3">
+                                    <a href="product-detail.html?id=${product._id}">${product.name}</a>
+                                </h5>
+                                <a href="javascript:void(0)" 
+                                   class="text-decoration-none add-to-cart" 
+                                   data-id="${product._id}"
+                                   data-after="Add to cart">
+                                    <span>${formattedPrice}</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+          grid.innerHTML += productHTML;
+        });
+      }
+
+      // Add to cart function
+      $(document).on("click", ".add-to-cart", function (e) {
+        e.preventDefault();
+        const productId = $(this).data("id");
+        console.log("Thêm sản phẩm vào giỏ:", productId);
+      });
+
+      // Add to wishlist function
+      $(document).on("click", ".btn-wishlist", function (e) {
+        e.preventDefault();
+        const productId = $(this).data("id");
+        console.log("Thêm vào wishlist:", productId);
+      });
+
+      // Initialize page
+      $(document).ready(function () {
+        renderProducts(sampleProducts);
+      });
+    </script>
+  </body>
+</html>

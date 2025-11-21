@@ -7,36 +7,39 @@ router.get('/', (req, res) => {
     res.render('user/HomePage');
 });
 
-// categories
+// --- categories ---
+router.get('/categories', CategoriesController.getCategories);
+
 router.get('/categories/nested', CategoriesController.getNestedCategories);
+
 router.get('/categories/all-children', CategoriesController.getAllChildrenCategories);
 
 
-// products
+// --- products ---
+router.get('/products', ProductsController.getProducts);
+
 router.get('/products/latest', ProductsController.getLatestProducts);
+
+router.get('/products/random', ProductsController.getRandomProducts);
+
+router.get('/products/search', ProductsController.searchProducts);
+
+router.get('/products/filter-options', ProductsController.getFilterOptions);
+
+router.get('/products/:id', ProductsController.getProductDetail);
+
 router.get('/product-detail', (req, res) => {
     res.render('user/ProductDetails');
 });
-router.get('/products/:id', ProductsController.getProductDetail);
 
-// Example controller
 router.get('/cart', (req, res) => {
     const cartItems = [
         {
-            product: {
-                id: 1,
-                name: 'Product Name',
-                price: 29.99,
-                category: 'Category Name'
-            },
+            product: { id: 1, name: 'Product Name', price: 29.99, category: 'Category Name' },
             quantity: 2
         }
     ];
-
-    // Tính tổng
-    const cartTotal = cartItems.reduce((sum, item) =>
-        sum + (item.product.price * item.quantity), 0
-    );
+    const cartTotal = cartItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
 
     res.render('user/CartPage', {
         cartItems: cartItems,
@@ -44,5 +47,8 @@ router.get('/cart', (req, res) => {
     });
 });
 
+router.get('/containers', (req, res) => {
+    res.render('user/Containers');
+});
 
 module.exports = router;

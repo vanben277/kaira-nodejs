@@ -1,0 +1,24 @@
+.video-bg {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16/9;
+    overflow: hidden;
+}
+
+@media (max-width: 960px) {
+    .video-bg {
+        aspect-ratio: 9/16;
+    }
+}
+
+.video-bg video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: cover;
+}

@@ -429,6 +429,40 @@ class CategoriesController {
         }
     }
 
+    // [GET] /categories
+    async getCategories(req, res) {
+        try {
+            const categories = await Category.find({ is_active: true })
+                .select('name slug parent_id');
+
+            const categoriesWithCount = await Promise.all(
+                categories.map(async (cat) => {
+                    const count = await Product.countDocuments({
+                        category_id: cat._id,
+                        is_active: true
+                    });
+                    return {
+                        ...cat.toObject(),
+                        productCount: count
+                    };
+                })
+            );
+
+            res.json({
+                success: true,
+                data: categoriesWithCount
+            });
+
+        } catch (error) {
+            console.error('Error getting categories:', error);
+            res.status(500).json({
+                success: false,
+                message: 'Lỗi khi lấy danh mục',
+                error: error.message
+            });
+        }
+    }
+
 }
 
 module.exports = new CategoriesController();
