@@ -281,6 +281,11 @@ body {
     color: #212529;
     text-decoration: none;
     transition: color 0.3s;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .product-content h5 a:hover {

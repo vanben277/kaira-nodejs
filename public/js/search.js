@@ -4,11 +4,18 @@ $(document).ready(function () {
     const $resultsList = $('.search-results-list');
     const $loadingSpinner = $('.loading-spinner');
     const $defaultCategories = $('#default-categories');
+    const $catListUl = $('.cat-list');
+
     let typingTimer;
     const doneTypingInterval = 500;
 
+    loadSearchCategories();
+
     const formatCurrency = (amount) => {
-        return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+        return new Intl.NumberFormat('vi-VN', {
+            style: 'currency',
+            currency: 'VND'
+        }).format(amount);
     };
 
     $searchInput.on('keyup', function (e) {
@@ -43,11 +50,42 @@ $(document).ready(function () {
         }
     });
 
+    function loadSearchCategories() {
+        $.ajax({
+            url: '/categories',
+            method: 'GET',
+            success: function (response) {
+                $catListUl.empty();
+
+                if (response.success && response.data && response.data.length > 0) {
+                    response.data.forEach(cat => {
+                        const htmlItem = `
+                            <li class="cat-list-item">
+                                <a href="/category/${cat.slug}" title="${cat.name}">
+                                    ${cat.name}
+                                </a>
+                            </li>
+                        `;
+                        $catListUl.append(htmlItem);
+                    });
+                } else {
+                    $catListUl.html('<p class="small text-muted">Chưa có danh mục nào.</p>');
+                }
+            },
+            error: function (err) {
+                console.error("Lỗi load categories trong search popup:", err);
+                $catListUl.html('<p class="small text-danger">Lỗi tải danh mục.</p>');
+            }
+        });
+    }
+
     function performSearch(keyword) {
         $.ajax({
             url: '/products/search',
             method: 'GET',
-            data: { keyword: keyword },
+            data: {
+                keyword: keyword
+            },
             dataType: 'json',
             success: function (response) {
                 $loadingSpinner.hide();
@@ -76,22 +114,22 @@ $(document).ready(function () {
                                 const maxPrice = Math.max(...prices);
 
                                 if (minPrice === maxPrice) {
-                                    priceHtml = `<span class="price">${formatCurrency(minPrice)}</span>`;
+                                    priceHtml = `<span class="price text-primary fw-bold">${formatCurrency(minPrice)}</span>`;
                                 } else {
-                                    priceHtml = `<span class="price">${formatCurrency(minPrice)} - ${formatCurrency(maxPrice)}</span>`;
+                                    priceHtml = `<span class="price text-primary fw-bold">${formatCurrency(minPrice)} - ${formatCurrency(maxPrice)}</span>`;
                                 }
                             }
                         } else {
-                            priceHtml = `<span class="price">${formatCurrency(product.price || 0)}</span>`;
+                            priceHtml = `<span class="price text-primary fw-bold">${formatCurrency(product.price || 0)}</span>`;
                         }
 
                         const htmlItem = `
-                            <a href="/product-detail?id=${product._id}" class="d-flex align-items-center p-2 text-decoration-none text-dark search-item">
+                            <a href="/product-detail?id=${product._id}" class="d-flex align-items-center p-2 text-decoration-none text-dark search-item border-bottom">
                                 <div class="flex-shrink-0">
-                                    <img src="${imgUrl}" alt="${product.name}" width="60" height="60">
+                                    <img src="${imgUrl}" alt="${product.name}" class="rounded" width="60" height="60" style="object-fit: cover;">
                                 </div>
                                 <div class="flex-grow-1 ms-3">
-                                    <h6 class="text-uppercase mb-1">${product.name}</h6>
+                                    <h6 class="text-uppercase mb-1 fs-6">${product.name}</h6>
                                     ${priceHtml}
                                 </div>
                             </a>
@@ -101,7 +139,7 @@ $(document).ready(function () {
 
                     const viewAllBtn = `
                         <div class="text-center mt-3 mb-2">
-                            <a href="/containers?keyword=${encodeURIComponent(keyword)}" class="btn btn-sm btn-dark">
+                            <a href="/containers?keyword=${encodeURIComponent(keyword)}" class="btn btn-sm btn-dark w-100">
                                 Xem tất cả kết quả
                             </a>
                         </div>
@@ -122,7 +160,7 @@ $(document).ready(function () {
 
     function resetSearch() {
         $searchResultsContainer.hide();
-        $defaultCategories.show();
+        $defaultCategories.fadeIn();
         $resultsList.empty();
     }
 });

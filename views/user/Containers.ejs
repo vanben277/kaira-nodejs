@@ -11,25 +11,22 @@
     include('../partials/user/Search') %> <%- include('../partials/user/Header')
     %>
 
-    <!-- Page Header -->
     <div class="page-header">
       <div class="container">
-        <h1>Sản Phẩm</h1>
+        <h1 id="pageTitle">Sản Phẩm</h1>
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="/">Trang Chủ</a></li>
             <span>/</span>
-            <li class="breadcrumb-item active">Sản Phẩm</li>
+            <li class="breadcrumb-item active" id="breadcrumbText">Sản Phẩm</li>
           </ol>
         </nav>
       </div>
     </div>
 
-    <!-- Products Section -->
     <section class="products py-5">
       <div class="container">
         <div class="row">
-          <!-- Filter Sidebar -->
           <div class="col-lg-3">
             <button class="mobile-filter-btn" onclick="toggleFilters()">
               <svg
@@ -45,53 +42,34 @@
             </button>
 
             <div class="filter-sidebar" id="filterSidebar">
-              <!-- Category Filter -->
-              <div class="filter-section">
-                <h5 class="filter-title">Danh Mục</h5>
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    id="cat1"
-                    checked
-                  />
-                  <label class="form-check-label" for="cat1"
-                    >Áo Thun (45)</label
-                  >
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="cat2" />
-                  <label class="form-check-label" for="cat2"
-                    >Áo Sơ Mi (32)</label
-                  >
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="cat3" />
-                  <label class="form-check-label" for="cat3"
-                    >Quần Jean (28)</label
-                  >
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="cat4" />
-                  <label class="form-check-label" for="cat4"
-                    >Áo Khoác (21)</label
-                  >
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="cat5" />
-                  <label class="form-check-label" for="cat5">Váy (18)</label>
-                </div>
+              <!-- Nút Xóa bộ lọc thêm vào để tiện sử dụng -->
+              <div
+                class="d-flex justify-content-between align-items-center mb-3"
+              >
+                <h5 class="filter-title mb-0">Bộ Lọc</h5>
+                <button
+                  class="btn btn-sm btn-outline-secondary btn-clear-all"
+                  style="font-size: 12px"
+                >
+                  Xóa tất cả
+                </button>
               </div>
 
-              <!-- Price Filter -->
+              <div class="filter-section">
+                <h5 class="filter-title">Danh Mục</h5>
+                <div id="categoryList"></div>
+              </div>
+
               <div class="filter-section">
                 <h5 class="filter-title">Khoảng Giá</h5>
                 <div class="form-check">
                   <input
-                    class="form-check-input"
+                    class="form-check-input price-range"
                     type="radio"
                     name="price"
                     id="price1"
+                    data-min="0"
+                    data-max="200000"
                   />
                   <label class="form-check-label" for="price1"
                     >Dưới 200.000đ</label
@@ -99,10 +77,12 @@
                 </div>
                 <div class="form-check">
                   <input
-                    class="form-check-input"
+                    class="form-check-input price-range"
                     type="radio"
                     name="price"
                     id="price2"
+                    data-min="200000"
+                    data-max="500000"
                   />
                   <label class="form-check-label" for="price2"
                     >200.000đ - 500.000đ</label
@@ -110,10 +90,12 @@
                 </div>
                 <div class="form-check">
                   <input
-                    class="form-check-input"
+                    class="form-check-input price-range"
                     type="radio"
                     name="price"
                     id="price3"
+                    data-min="500000"
+                    data-max="1000000"
                   />
                   <label class="form-check-label" for="price3"
                     >500.000đ - 1.000.000đ</label
@@ -121,89 +103,50 @@
                 </div>
                 <div class="form-check">
                   <input
-                    class="form-check-input"
+                    class="form-check-input price-range"
                     type="radio"
                     name="price"
                     id="price4"
+                    data-min="1000000"
+                    data-max="999999999"
                   />
                   <label class="form-check-label" for="price4"
                     >Trên 1.000.000đ</label
                   >
                 </div>
                 <div class="price-inputs">
-                  <input type="number" placeholder="Từ" class="form-control" />
-                  <input type="number" placeholder="Đến" class="form-control" />
+                  <input
+                    type="number"
+                    id="minPrice"
+                    placeholder="Từ"
+                    class="form-control"
+                  />
+                  <input
+                    type="number"
+                    id="maxPrice"
+                    placeholder="Đến"
+                    class="form-control"
+                  />
                 </div>
               </div>
 
-              <!-- Size Filter -->
               <div class="filter-section">
                 <h5 class="filter-title">Kích Thước</h5>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="size1" />
-                  <label class="form-check-label" for="size1">S</label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="size2" />
-                  <label class="form-check-label" for="size2">M</label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="size3" />
-                  <label class="form-check-label" for="size3">L</label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="size4" />
-                  <label class="form-check-label" for="size4">XL</label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="size5" />
-                  <label class="form-check-label" for="size5">XXL</label>
-                </div>
+                <div id="sizeList"></div>
               </div>
 
-              <!-- Color Filter -->
               <div class="filter-section">
                 <h5 class="filter-title">Màu Sắc</h5>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="color1" />
-                  <label class="form-check-label" for="color1">Đen</label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="color2" />
-                  <label class="form-check-label" for="color2">Trắng</label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="color3" />
-                  <label class="form-check-label" for="color3">Xám</label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="color4" />
-                  <label class="form-check-label" for="color4"
-                    >Xanh Dương</label
-                  >
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="color5" />
-                  <label class="form-check-label" for="color5">Đỏ</label>
-                </div>
+                <div id="colorList"></div>
               </div>
 
-              <!-- Filter Buttons -->
-              <div class="filter-buttons">
-                <button class="btn-apply-filter">Áp Dụng</button>
-                <button class="btn-reset-filter">Đặt Lại</button>
-              </div>
+              <!-- Đã xóa div filter-buttons (Áp dụng / Đặt lại) -->
             </div>
           </div>
 
-          <!-- Products Grid -->
           <div class="col-lg-9">
-            <!-- Products Header -->
             <div class="products-header">
-              <div class="products-count">
-                Hiển thị <strong>1-12</strong> trong <strong>144</strong> sản
-                phẩm
-              </div>
+              <div class="products-count" id="productCount">Đang tải...</div>
               <div class="products-controls">
                 <div class="view-toggle">
                   <button class="view-btn active">
@@ -230,57 +173,27 @@
                   </button>
                 </div>
                 <select class="sort-select">
-                  <option>Sắp xếp mặc định</option>
-                  <option>Giá: Thấp đến Cao</option>
-                  <option>Giá: Cao đến Thấp</option>
-                  <option>Tên: A-Z</option>
-                  <option>Tên: Z-A</option>
-                  <option>Mới nhất</option>
+                  <option value="default">Sắp xếp mặc định</option>
+                  <option value="price_asc">Giá: Thấp đến Cao</option>
+                  <option value="price_desc">Giá: Cao đến Thấp</option>
+                  <option value="name_desc">Tên: A-Z</option>
+                  <option value="name_asc">Tên: Z-A</option>
+                  <option value="newest">Mới nhất</option>
                 </select>
               </div>
             </div>
 
-            <!-- Products Grid -->
             <div class="row" id="productsGrid">
-              <!-- Product items will be rendered here by JavaScript -->
+              <div class="col-12 text-center py-5">
+                <div class="spinner-border" role="status">
+                  <span class="visually-hidden">Đang tải...</span>
+                </div>
+              </div>
             </div>
 
-            <!-- Pagination -->
             <div class="pagination-wrapper">
               <nav aria-label="Page navigation">
-                <ul class="pagination">
-                  <li class="page-item disabled">
-                    <a class="page-link" href="#" tabindex="-1">
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                      >
-                        <use xlink:href="#arrow-left"></use>
-                      </svg>
-                    </a>
-                  </li>
-                  <li class="page-item active">
-                    <a class="page-link" href="#">1</a>
-                  </li>
-                  <li class="page-item"><a class="page-link" href="#">2</a></li>
-                  <li class="page-item"><a class="page-link" href="#">3</a></li>
-                  <li class="page-item"><a class="page-link" href="#">4</a></li>
-                  <li class="page-item"><a class="page-link" href="#">5</a></li>
-                  <li class="page-item">
-                    <a class="page-link" href="#">
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                      >
-                        <use xlink:href="#arrow-right"></use>
-                      </svg>
-                    </a>
-                  </li>
-                </ul>
+                <ul class="pagination" id="paginationList"></ul>
               </nav>
             </div>
           </div>
@@ -297,146 +210,451 @@
         sidebar.classList.toggle("show");
       }
 
-      const sampleProducts = [
-        {
-          _id: 1,
-          name: "Dark florish onepiece",
-          price: 950000,
-          image: "/images/product-item-4.jpg",
-        },
-        {
-          _id: 2,
-          name: "Baggy Shirt",
-          price: 550000,
-          image: "/images/product-item-3.jpg",
-        },
-        {
-          _id: 3,
-          name: "Cotton off-white shirt",
-          price: 650000,
-          image: "/images/product-item-5.jpg",
-        },
-        {
-          _id: 4,
-          name: "Handmade crop sweater",
-          price: 500000,
-          image: "/images/product-item-6.jpg",
-        },
-        {
-          _id: 5,
-          name: "Classic Denim Jacket",
-          price: 1200000,
-          image: "/images/product-item-9.jpg",
-        },
-        {
-          _id: 6,
-          name: "Slim Fit Jeans",
-          price: 750000,
-          image: "/images/product-item-10.jpg",
-        },
-        {
-          _id: 7,
-          name: "Summer Floral Dress",
-          price: 800000,
-          image: "/images/product-item-1.jpg",
-        },
-        {
-          _id: 8,
-          name: "Basic White Tee",
-          price: 250000,
-          image: "/images/product-item-2.jpg",
-        },
-        {
-          _id: 9,
-          name: "Black Hoodie",
-          price: 600000,
-          image: "/images/product-item-7.jpg",
-        },
-        {
-          _id: 10,
-          name: "Running Shoes",
-          price: 1500000,
-          image: "/images/product-item-8.jpg",
-        },
-        {
-          _id: 11,
-          name: "Vintage Dress",
-          price: 450000,
-          image: "/images/product-item-1.jpg",
-        },
-        {
-          _id: 12,
-          name: "Casual Pants",
-          price: 350000,
-          image: "/images/product-item-3.jpg",
-        },
-      ];
+      $(document).ready(function () {
+        let currentPage = 1;
+        const urlParams = new URLSearchParams(window.location.search);
 
-      function renderProducts(products) {
-        const grid = document.getElementById("productsGrid");
-        grid.innerHTML = "";
+        const keyword = urlParams.get("keyword");
 
-        products.forEach((product) => {
-          let imageUrl = product.image || "images/default-product.jpg";
-          const formattedPrice = new Intl.NumberFormat("vi-VN", {
+        const path = window.location.pathname;
+        let currentCategorySlug = null;
+        if (path.includes("/category/")) {
+          currentCategorySlug = path.split("/category/")[1];
+        }
+        // -------------------------------------------
+
+        let priceDebounceTimer;
+
+        let filters = {
+          keyword: keyword || null,
+          category: null,
+          minPrice: null,
+          maxPrice: null,
+          size: null,
+          color: null,
+          sort: "createdAt",
+          order: "desc",
+        };
+
+        if (keyword) {
+          $("#pageTitle").text(`Kết quả tìm kiếm: "${keyword}"`);
+          $("#breadcrumbText").text(`Tìm kiếm: ${keyword}`);
+        }
+
+        loadCategories();
+        loadFilterOptions();
+
+        function loadCategories() {
+          $.ajax({
+            url: "/categories",
+            method: "GET",
+            success: function (response) {
+              if (response.success) {
+                renderCategories(response.data);
+
+                loadProducts();
+              }
+            },
+            error: function (err) {
+              console.error("Lỗi load categories:", err);
+              loadProducts();
+            },
+          });
+        }
+
+        function loadFilterOptions() {
+          $.ajax({
+            url: "/products/filter-options",
+            method: "GET",
+            success: function (response) {
+              if (response.success) {
+                renderSizes(response.data.sizes);
+                renderColors(response.data.colors);
+              }
+            },
+            error: function (err) {
+              console.error("Lỗi load filter options:", err);
+            },
+          });
+        }
+
+        function loadProducts() {
+          $("#productsGrid").html(
+            '<div class="col-12 text-center py-5"><div class="spinner-border" role="status"><span class="visually-hidden">Đang tải...</span></div></div>'
+          );
+
+          const params = {
+            page: currentPage,
+            limit: 12,
+          };
+
+          if (filters.keyword) params.keyword = filters.keyword;
+          if (filters.category) params.category = filters.category;
+          if (filters.minPrice) params.minPrice = filters.minPrice;
+          if (filters.maxPrice) params.maxPrice = filters.maxPrice;
+          if (filters.size) params.size = filters.size;
+          if (filters.color) params.color = filters.color;
+          if (filters.sort) params.sort = filters.sort;
+          if (filters.order) params.order = filters.order;
+
+          $.ajax({
+            url: "/products",
+            method: "GET",
+            data: params,
+            success: function (response) {
+              if (response.success) {
+                renderProducts(response.data);
+                renderPagination(response.pagination);
+                updateProductCount(response.pagination);
+              }
+            },
+            error: function (err) {
+              console.error("Lỗi load products:", err);
+              $("#productsGrid").html(
+                '<div class="col-12 text-center py-5"><p class="text-danger">Đã xảy ra lỗi khi tải sản phẩm</p></div>'
+              );
+            },
+          });
+        }
+
+        function renderCategories(categories) {
+          const container = $("#categoryList");
+          container.empty();
+
+          categories.forEach((cat, index) => {
+            let isChecked = "";
+            if (currentCategorySlug && cat.slug === currentCategorySlug) {
+              isChecked = "checked";
+              filters.category = cat._id;
+
+              $("#pageTitle").text(cat.name);
+            }
+
+            const inputId = `cat_${cat._id}`;
+
+            const html = `
+                  <div class="form-check">
+                    <input class="form-check-input category-filter" type="checkbox" 
+                           id="${inputId}" value="${cat._id}" ${isChecked} />
+                    <label class="form-check-label" for="${inputId}">
+                      ${cat.name} (${cat.productCount || 0})
+                    </label>
+                  </div>
+                `;
+            container.append(html);
+          });
+        }
+
+        function renderSizes(sizes) {
+          const container = $("#sizeList");
+          container.empty();
+          sizes.forEach((size, index) => {
+            const html = `
+                  <div class="form-check">
+                    <input class="form-check-input size-filter" type="checkbox" 
+                           id="size${index}" value="${size}" />
+                    <label class="form-check-label" for="size${index}">${size}</label>
+                  </div>
+                `;
+            container.append(html);
+          });
+        }
+
+        function renderColors(colors) {
+          const container = $("#colorList");
+          container.empty();
+          colors.forEach((color, index) => {
+            const html = `
+                  <div class="form-check">
+                    <input class="form-check-input color-filter" type="checkbox" 
+                           id="color${index}" value="${color.name}" />
+                    <label class="form-check-label" for="color${index}">${color.name}</label>
+                  </div>
+                `;
+            container.append(html);
+          });
+        }
+
+        function renderProducts(products) {
+          const grid = $("#productsGrid");
+          grid.empty();
+
+          if (!products || products.length === 0) {
+            grid.html(
+              '<div class="col-12 text-center py-5"><p class="text-muted">Không tìm thấy sản phẩm nào</p></div>'
+            );
+            return;
+          }
+
+          products.forEach((product) => {
+            let imgUrl = "images/default-product.jpg";
+            if (product.has_variants && product.variants?.length > 0) {
+              if (product.variants[0].images?.length > 0) {
+                imgUrl = product.variants[0].images[0];
+              }
+            } else if (product.thumbnail) {
+              imgUrl = product.thumbnail;
+            } else if (product.images?.length > 0) {
+              imgUrl = product.images[0];
+            }
+
+            let priceHtml = "";
+            if (product.has_variants && product.variants?.length > 0) {
+              const sizes = product.variants[0].sizes;
+              if (sizes?.length > 0) {
+                const prices = sizes.map((s) => s.price);
+                const minPrice = Math.min(...prices);
+                const maxPrice = Math.max(...prices);
+                if (minPrice === maxPrice) {
+                  priceHtml = formatCurrency(minPrice);
+                } else {
+                  priceHtml = `${formatCurrency(minPrice)} - ${formatCurrency(
+                    maxPrice
+                  )}`;
+                }
+              }
+            } else {
+              priceHtml = formatCurrency(product.price || 0);
+            }
+
+            const html = `
+                  <div class="col-md-4 col-sm-6 mb-4">
+                    <div class="product-item image-zoom-effect link-effect">
+                      <div class="image-holder position-relative">
+                        <a href="/product-detail?id=${product._id}">
+                          <img src="${imgUrl}" alt="${product.name}" 
+                               class="product-image img-fluid" 
+                               onerror="this.src='images/default-product.jpg'" />
+                        </a>
+                        <a href="javascript:void(0)" class="btn-icon btn-wishlist" data-id="${product._id}">
+                          <svg width="24" height="24" viewBox="0 0 24 24">
+                            <use xlink:href="#heart"></use>
+                          </svg>
+                        </a>
+                        <div class="product-content">
+                          <h5 class="element-title text-uppercase fs-5 mt-3">
+                            <a href="/product-detail?id=${product._id}">${product.name}</a>
+                          </h5>
+                          <a href="javascript:void(0)" class="text-decoration-none add-to-cart" 
+                             data-id="${product._id}" data-after="Add to cart">
+                            <span>${priceHtml}</span>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                `;
+            grid.append(html);
+          });
+        }
+
+        function renderPagination(pagination) {
+          const container = $("#paginationList");
+          container.empty();
+          if (!pagination || pagination.totalPages <= 1) return;
+
+          const prevDisabled = pagination.page === 1 ? "disabled" : "";
+          container.append(`
+                <li class="page-item ${prevDisabled}">
+                  <a class="page-link" href="#" data-page="${
+                    pagination.page - 1
+                  }">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                      <use xlink:href="#arrow-left"></use>
+                    </svg>
+                  </a>
+                </li>
+            `);
+
+          for (let i = 1; i <= pagination.totalPages; i++) {
+            const active = i === pagination.page ? "active" : "";
+            container.append(`
+                  <li class="page-item ${active}">
+                    <a class="page-link" href="#" data-page="${i}">${i}</a>
+                  </li>
+                `);
+          }
+
+          const nextDisabled =
+            pagination.page === pagination.totalPages ? "disabled" : "";
+          container.append(`
+                <li class="page-item ${nextDisabled}">
+                  <a class="page-link" href="#" data-page="${
+                    pagination.page + 1
+                  }">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                      <use xlink:href="#arrow-right"></use>
+                    </svg>
+                  </a>
+                </li>
+            `);
+        }
+
+        function updateProductCount(pagination) {
+          if (!pagination) return;
+          const start = (pagination.page - 1) * pagination.limit + 1;
+          const end = Math.min(
+            pagination.page * pagination.limit,
+            pagination.total
+          );
+          $("#productCount").html(
+            `Hiển thị <strong>${start}-${end}</strong> trong <strong>${pagination.total}</strong> sản phẩm`
+          );
+        }
+
+        function formatCurrency(amount) {
+          return new Intl.NumberFormat("vi-VN", {
             style: "currency",
             currency: "VND",
-          }).format(product.price);
+          }).format(amount);
+        }
 
-          const productHTML = `
-                <div class="col-md-4 col-sm-6 mb-4">
-                    <div class="product-item image-zoom-effect link-effect">
-                        <div class="image-holder position-relative">
-                            <a href="/product-detail?id=${product._id}">
-                                <img
-                                    src="${imageUrl}"
-                                    alt="${product.name}"
-                                    class="product-image img-fluid"
-                                    onerror="this.src='images/default-product.jpg'"
-                                />
-                            </a>
-                            <a href="javascript:void(0)" class="btn-icon btn-wishlist" data-id="${product._id}">
-                                <svg width="24" height="24" viewBox="0 0 24 24">
-                                    <use xlink:href="#heart"></use>
-                                </svg>
-                            </a>
-                            <div class="product-content">
-                                <h5 class="element-title text-uppercase fs-5 mt-3">
-                                    <a href="product-detail.html?id=${product._id}">${product.name}</a>
-                                </h5>
-                                <a href="javascript:void(0)" 
-                                   class="text-decoration-none add-to-cart" 
-                                   data-id="${product._id}"
-                                   data-after="Add to cart">
-                                    <span>${formattedPrice}</span>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
+        function updateFiltersAndReload() {
+          const selectedCategories = $(".category-filter:checked")
+            .map(function () {
+              return $(this).val();
+            })
+            .get();
 
-          grid.innerHTML += productHTML;
+          filters.category =
+            selectedCategories.length > 0 ? selectedCategories[0] : null;
+
+          window.history.pushState({}, "", "/containers");
+
+          const selectedSizes = $(".size-filter:checked")
+            .map(function () {
+              return $(this).val();
+            })
+            .get();
+          filters.size = selectedSizes.length > 0 ? selectedSizes[0] : null;
+
+          const selectedColors = $(".color-filter:checked")
+            .map(function () {
+              return $(this).val();
+            })
+            .get();
+          filters.color = selectedColors.length > 0 ? selectedColors[0] : null;
+
+          const selectedRadio = $(".price-range:checked");
+          if (selectedRadio.length > 0) {
+            filters.minPrice = selectedRadio.data("min");
+            filters.maxPrice = selectedRadio.data("max");
+          } else {
+            filters.minPrice = $("#minPrice").val();
+            filters.maxPrice = $("#maxPrice").val();
+          }
+
+          currentPage = 1;
+          loadProducts();
+        }
+
+        $(document).on(
+          "change",
+          ".category-filter, .size-filter, .color-filter",
+          function () {
+            const type = $(this).attr("class").split(" ")[1];
+            if ($(this).is(":checked")) {
+              $(`.${type}`).not(this).prop("checked", false);
+            }
+            updateFiltersAndReload();
+          }
+        );
+
+        $(".price-range").on("change", function () {
+          $("#minPrice").val("");
+          $("#maxPrice").val("");
+          updateFiltersAndReload();
         });
-      }
 
-      // Add to cart function
-      $(document).on("click", ".add-to-cart", function (e) {
-        e.preventDefault();
-        const productId = $(this).data("id");
-        console.log("Thêm sản phẩm vào giỏ:", productId);
-      });
+        $("#minPrice, #maxPrice").on("input", function () {
+          $(".price-range").prop("checked", false);
 
-      // Add to wishlist function
-      $(document).on("click", ".btn-wishlist", function (e) {
-        e.preventDefault();
-        const productId = $(this).data("id");
-        console.log("Thêm vào wishlist:", productId);
-      });
+          clearTimeout(priceDebounceTimer);
+          priceDebounceTimer = setTimeout(() => {
+            updateFiltersAndReload();
+          }, 800);
+        });
 
-      // Initialize page
-      $(document).ready(function () {
-        renderProducts(sampleProducts);
+        $(".sort-select").on("change", function () {
+          const value = $(this).val();
+          switch (value) {
+            case "price_asc":
+              filters.sort = "price";
+              filters.order = "asc";
+              break;
+            case "price_desc":
+              filters.sort = "price";
+              filters.order = "desc";
+              break;
+            case "name_asc":
+              filters.sort = "name";
+              filters.order = "asc";
+              break;
+            case "name_desc":
+              filters.sort = "name";
+              filters.order = "desc";
+              break;
+            case "newest":
+              filters.sort = "createdAt";
+              filters.order = "desc";
+              break;
+            default:
+              filters.sort = "createdAt";
+              filters.order = "desc";
+          }
+          currentPage = 1;
+          loadProducts();
+        });
+
+        $(document).on("click", ".page-link", function (e) {
+          e.preventDefault();
+          if ($(this).parent().hasClass("disabled")) return;
+          const page = $(this).data("page");
+          if (page) {
+            currentPage = page;
+            loadProducts();
+            $("html, body").animate(
+              {
+                scrollTop: 0,
+              },
+              300
+            );
+          }
+        });
+
+        $(".btn-clear-all").on("click", function () {
+          $('input[type="checkbox"], input[type="radio"]').prop(
+            "checked",
+            false
+          );
+          $("#minPrice, #maxPrice").val("");
+          $(".sort-select").val("default");
+
+          filters.category = null;
+          filters.minPrice = null;
+          filters.maxPrice = null;
+          filters.size = null;
+          filters.color = null;
+          filters.sort = "createdAt";
+          filters.order = "desc";
+
+          window.history.pushState({}, "", "/containers");
+
+          currentPage = 1;
+          loadProducts();
+        });
+
+        $(document).on("click", ".add-to-cart", function (e) {
+          e.preventDefault();
+          const productId = $(this).data("id");
+          console.log("Thêm sản phẩm vào giỏ:", productId);
+        });
+
+        $(document).on("click", ".btn-wishlist", function (e) {
+          e.preventDefault();
+          const productId = $(this).data("id");
+          console.log("Thêm vào wishlist:", productId);
+        });
       });
     </script>
   </body>

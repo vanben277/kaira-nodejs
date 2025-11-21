@@ -635,19 +635,29 @@ class ProductsController {
                 size,
                 color,
                 sort = 'createdAt',
-                order = 'desc'
+                order = 'desc',
+                keyword
             } = req.query;
 
             const query = { is_active: true };
+
+            if (keyword && keyword.trim() !== '') {
+                query.name = { $regex: keyword, $options: 'i' };
+            }
 
             if (category) {
                 query.category_id = category;
             }
 
             if (minPrice || maxPrice) {
-                query.price = {};
-                if (minPrice) query.price.$gte = Number(minPrice);
-                if (maxPrice) query.price.$lte = Number(maxPrice);
+                const priceCondition = {};
+                if (minPrice) priceCondition.$gte = Number(minPrice);
+                if (maxPrice) priceCondition.$lte = Number(maxPrice);
+
+                query.$or = [
+                    { price: priceCondition },
+                    { 'variants.sizes.price': priceCondition }
+                ];
             }
 
             if (size) {
@@ -659,6 +669,7 @@ class ProductsController {
             }
 
             const sortObj = {};
+
             sortObj[sort] = order === 'asc' ? 1 : -1;
 
             const skip = (page - 1) * limit;

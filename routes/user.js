@@ -47,8 +47,16 @@ router.get('/cart', (req, res) => {
     });
 });
 
+router.get('/category/:slug', (req, res) => {
+    res.render('user/Containers', {
+        currentCategorySlug: req.params.slug
+    });
+});
+
 router.get('/containers', (req, res) => {
-    res.render('user/Containers');
+    res.render('user/Containers', {
+        currentCategorySlug: null
+    });
 });
 
 module.exports = router;

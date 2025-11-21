@@ -1,4 +1,5 @@
 const Category = require('../model/Categories');
+const Product = require('../model/Products');
 const fs = require('fs');
 const path = require('path');
 
@@ -432,7 +433,10 @@ class CategoriesController {
     // [GET] /categories
     async getCategories(req, res) {
         try {
-            const categories = await Category.find({ is_active: true })
+            const categories = await Category.find({
+                is_active: true,
+                parent_id: { $ne: null }
+            })
                 .select('name slug parent_id');
 
             const categoriesWithCount = await Promise.all(
