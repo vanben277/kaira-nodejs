@@ -380,27 +380,4 @@ $(document).ready(function () {
             }
         }
     }
-
-    // ===================== EVENT HANDLERS =====================
-    $(document).on("click", ".add-to-cart", function (e) {
-        e.preventDefault();
-        const productId = $(this).data("id");
-        addToCart(productId);
-    });
-
-    $(document).on("click", ".btn-wishlist", function (e) {
-        e.preventDefault();
-        const productId = $(this).data("id");
-        addToWishlist(productId);
-    });
-
-    function addToCart(productId) {
-        console.log("Thêm sản phẩm vào giỏ:", productId);
-        // Code gọi API add to cart ở đây
-    }
-
-    function addToWishlist(productId) {
-        console.log("Thêm vào wishlist:", productId);
-        // Code gọi API add wishlist ở đây
-    }
 });

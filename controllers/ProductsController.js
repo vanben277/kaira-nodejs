@@ -744,5 +744,56 @@ class ProductsController {
             });
         }
     }
+
+    // [POST] /products/by-ids
+    async getProductsByIds(req, res) {
+        try {
+            const { productIds } = req.body;
+
+            //console.log('Received productIds:', productIds);
+
+            if (!productIds || !Array.isArray(productIds) || productIds.length === 0) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Danh sách ID sản phẩm không hợp lệ'
+                });
+            }
+
+            const products = await Product.find({
+                _id: { $in: productIds }
+            }).lean();
+
+            //console.log('Found products:', products.length);
+
+            if (products.length === 0) {
+                const objectIds = productIds.map(id => new mongoose.Types.ObjectId(id));
+                const productsRetry = await Product.find({
+                    _id: { $in: objectIds }
+                }).lean();
+
+                console.log('Found products after conversion:', productsRetry.length);
+
+                return res.json({
+                    success: true,
+                    products: productsRetry,
+                    count: productsRetry.length
+                });
+            }
+
+            return res.json({
+                success: true,
+                products: products,
+                count: products.length
+            });
+
+        } catch (error) {
+            console.error('Error in getProductsByIds:', error);
+            return res.status(500).json({
+                success: false,
+                message: 'Có lỗi xảy ra khi tải sản phẩm',
+                error: error.message
+            });
+        }
+    }
 }
 module.exports = new ProductsController();

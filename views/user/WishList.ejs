@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <title>Sản Phẩm Yêu Thích - Kaira</title>
+    <%- include('../partials/user/Head') %>
+    <link rel="stylesheet" href="/css/wishlist.css" />
+  </head>
+
+  <body>
+    <%- include('../partials/user/SVGIcon') %> <%-
+    include('../partials/user/Search') %> <%- include('../partials/user/Header')
+    %>
+
+    <div class="wishlist-container">
+      <div class="wishlist-header">
+        <div class="container">
+          <h1>Sản Phẩm Yêu Thích</h1>
+        </div>
+      </div>
+
+      <div id="emptyWishlist" class="wishlist-empty" style="display: none">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <use xlink:href="#heart"></use>
+        </svg>
+        <h1>Danh Sách Yêu Thích Trống</h1>
+        <p>
+          Bạn chưa có sản phẩm yêu thích nào. Hãy khám phá và thêm những sản
+          phẩm bạn thích!
+        </p>
+        <a href="/" class="btn-start-shopping"> Khám Phá Sản Phẩm </a>
+      </div>
+
+      <div id="wishlistContent" class="container" style="display: none">
+        <!-- action -->
+        <div
+          class="wishlist-actions d-flex justify-content-between align-items-center"
+        >
+          <div class="wishlist-count">
+            <strong id="totalItems">0</strong> sản phẩm
+          </div>
+          <button class="btn-clear-all clear-wishlist">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              style="margin-right: 5px"
+            >
+              <use xlink:href="#trash"></use>
+            </svg>
+            Xóa Tất Cả
+          </button>
+        </div>
+
+        <div id="wishlistItems" class="row">
+          <!-- render -->
+        </div>
+      </div>
+    </div>
+
+    <%- include('../partials/user/Footer') %> <%-
+    include('../partials/user/Script') %>
+
+    <script>
+      $(document).ready(function () {
+        loadWishlistPage();
+      });
+
+      function loadWishlistPage() {
+        const wishlist = WishlistManager.get();
+
+        if (wishlist.length === 0) {
+          $("#emptyWishlist").show();
+          $("#wishlistContent").hide();
+          return;
+        }
+
+        $("#emptyWishlist").hide();
+        $("#wishlistContent").show();
+        $("#totalItems").text(wishlist.length);
+
+        fetchWishlistProducts(wishlist);
+      }
+
+      function fetchWishlistProducts(wishlist) {
+        const productIds = wishlist.map((item) => item.productId);
+
+        $.ajax({
+          url: "/products/by-ids",
+          method: "POST",
+          dataType: "json",
+          contentType: "application/json",
+          data: JSON.stringify({ productIds: productIds }),
+          success: function (response) {
+            if (response.success) {
+              renderWishlistItems(response.products);
+            } else {
+              console.error("Error fetching products");
+              $("#wishlistItems").html(
+                '<p class="text-center">Không thể tải sản phẩm. Vui lòng thử lại!</p>'
+              );
+            }
+          },
+          error: function (xhr, status, error) {
+            console.error("Error:", error);
+            $("#wishlistItems").html(
+              '<p class="text-center">Có lỗi xảy ra. Vui lòng thử lại!</p>'
+            );
+          },
+        });
+      }
+
+      function renderWishlistItems(products) {
+        const $container = $("#wishlistItems");
+        $container.empty();
+
+        if (!products || products.length === 0) {
+          $container.html(
+            '<p class="text-center w-100">Không tìm thấy sản phẩm.</p>'
+          );
+          return;
+        }
+
+        products.forEach((product) => {
+          let imageUrl = "/images/default-product.jpg";
+          if (product.thumbnail) {
+            imageUrl = product.thumbnail;
+          } else if (product.images && product.images.length > 0) {
+            imageUrl = product.images[0];
+          }
+
+          let displayPrice = 0;
+          if (product.price !== undefined && product.price !== null) {
+            displayPrice = product.price;
+          } else if (
+            product.has_variants &&
+            product.variants &&
+            product.variants.length > 0
+          ) {
+            let minPrice = Infinity;
+            product.variants.forEach((variant) => {
+              if (variant.sizes && variant.sizes.length > 0) {
+                variant.sizes.forEach((size) => {
+                  if (size.price < minPrice) minPrice = size.price;
+                });
+              }
+            });
+            displayPrice = minPrice === Infinity ? 0 : minPrice;
+          }
+
+          const formattedPrice = new Intl.NumberFormat("vi-VN", {
+            style: "currency",
+            currency: "VND",
+          }).format(displayPrice);
+
+          const itemHTML = `
+                    <div class="col-12">
+                        <div class="wishlist-item">
+                            <div class="row align-items-center">
+                                <!-- Image -->
+                                <div class="col-md-2 col-3">
+                                    <a href="/product-detail?id=${product._id}">
+                                        <img 
+                                            src="${imageUrl}" 
+                                            alt="${product.name}"
+                                            class="wishlist-item-image img-fluid"
+                                            onerror="this.src='/images/default-product.jpg'"
+                                        />
+                                    </a>
+                                </div>
+
+                                <!-- Info -->
+                                <div class="col-md-6 col-9">
+                                    <div class="wishlist-item-info">
+                                        <h5>
+                                            <a href="/product-detail?id=${
+                                              product._id
+                                            }">
+                                                ${product.name}
+                                            </a>
+                                        </h5>
+                                        ${
+                                          product.category
+                                            ? `<p class="text-muted mb-0">${product.category}</p>`
+                                            : ""
+                                        }
+                                        <div class="wishlist-item-price">${formattedPrice}</div>
+                                    </div>
+                                </div>
+
+                                <!-- Actions -->
+                                <div class="col-md-4 col-12">
+                                    <div class="wishlist-item-actions">
+                                        <button 
+                                            class="btn-add-to-cart" 
+                                            onclick="addToCartFromWishlist('${
+                                              product._id
+                                            }')">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 5px;">
+                                                <use xlink:href="#shopping-bag"></use>
+                                            </svg>
+                                            Thêm Vào Giỏ
+                                        </button>
+                                        <button 
+                                            class="btn-remove-wishlist remove-from-wishlist" 
+                                            data-id="${product._id}">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 5px;">
+                                                <use xlink:href="#trash"></use>
+                                            </svg>
+                                            Xóa
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+          $container.append(itemHTML);
+        });
+      }
+
+      function addToCartFromWishlist(productId) {
+        addToCart(productId, null, 1, null, null);
+      }
+
+      $(document).on("click", ".remove-from-wishlist", function (e) {
+        e.preventDefault();
+        const productId = $(this).data("id");
+
+        if (
+          confirm("Bạn có chắc muốn xóa sản phẩm này khỏi danh sách yêu thích?")
+        ) {
+          WishlistManager.remove(productId);
+          loadWishlistPage();
+        }
+      });
+
+      $(document).on("click", ".clear-wishlist", function (e) {
+        e.preventDefault();
+
+        if (confirm("Bạn có chắc muốn xóa toàn bộ danh sách yêu thích?")) {
+          WishlistManager.clear();
+          loadWishlistPage();
+        }
+      });
+
+      function showNotification(message, type = "success") {
+        if ($(".toast-container").length === 0) {
+          $("body").append(
+            '<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;"></div>'
+          );
+        }
+
+        const toastClass =
+          type === "success"
+            ? "bg-success"
+            : type === "error"
+            ? "bg-danger"
+            : "bg-info";
+
+        const toastId = "toast-" + Date.now();
+        const toast = `
+                <div id="${toastId}" class="toast align-items-center text-white ${toastClass} border-0" role="alert">
+                    <div class="d-flex">
+                        <div class="toast-body">${message}</div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+            `;
+
+        $(".toast-container").append(toast);
+        const $toastElement = $(`#${toastId}`);
+        const bsToast = new bootstrap.Toast($toastElement[0], { delay: 3000 });
+        bsToast.show();
+
+        $toastElement.on("hidden.bs.toast", function () {
+          $(this).remove();
+        });
+      }
+    </script>
+  </body>
+</html>

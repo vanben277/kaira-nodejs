@@ -7,44 +7,26 @@ router.get('/', (req, res) => {
     res.render('user/HomePage');
 });
 
-// --- categories ---
+// categories
 router.get('/categories', CategoriesController.getCategories);
-
 router.get('/categories/nested', CategoriesController.getNestedCategories);
-
 router.get('/categories/all-children', CategoriesController.getAllChildrenCategories);
 
-
-// --- products ---
+// products
 router.get('/products', ProductsController.getProducts);
-
 router.get('/products/latest', ProductsController.getLatestProducts);
-
 router.get('/products/random', ProductsController.getRandomProducts);
-
 router.get('/products/search', ProductsController.searchProducts);
-
 router.get('/products/filter-options', ProductsController.getFilterOptions);
-
+router.post('/products/by-ids', ProductsController.getProductsByIds);
 router.get('/products/:id', ProductsController.getProductDetail);
-
 router.get('/product-detail', (req, res) => {
     res.render('user/ProductDetails');
 });
 
+// cart
 router.get('/cart', (req, res) => {
-    const cartItems = [
-        {
-            product: { id: 1, name: 'Product Name', price: 29.99, category: 'Category Name' },
-            quantity: 2
-        }
-    ];
-    const cartTotal = cartItems.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
-
-    res.render('user/CartPage', {
-        cartItems: cartItems,
-        cartTotal: cartTotal
-    });
+    res.render('user/CartPage');
 });
 
 router.get('/category/:slug', (req, res) => {
@@ -57,6 +39,10 @@ router.get('/containers', (req, res) => {
     res.render('user/Containers', {
         currentCategorySlug: null
     });
+});
+
+router.get('/wishlist', (req, res) => {
+    res.render('user/WishList');
 });
 
 module.exports = router;
