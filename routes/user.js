@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const CategoriesController = require('../controllers/CategoriesController');
 const ProductsController = require('../controllers/ProductsController');
+const CheckoutController = require('../controllers/CheckoutController');
+const authMiddleware = require('../middleware/auth');
 
 router.get('/', (req, res) => {
     res.render('user/HomePage');
@@ -28,6 +30,12 @@ router.get('/product-detail', (req, res) => {
 router.get('/cart', (req, res) => {
     res.render('user/CartPage');
 });
+
+// Checkout
+router.get('/checkout', authMiddleware.isAuthenticated, CheckoutController.showCheckoutPage);
+router.post('/checkout/create-order', authMiddleware.isAuthenticated, CheckoutController.createOrder);
+router.get('/order-success/:orderId', authMiddleware.isAuthenticated, CheckoutController.orderSuccess);
+router.get('/order-tracking/:orderNumber', authMiddleware.isAuthenticated, CheckoutController.trackOrder);
 
 router.get('/category/:slug', (req, res) => {
     res.render('user/Containers', {

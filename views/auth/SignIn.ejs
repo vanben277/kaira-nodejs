@@ -168,27 +168,28 @@
     <%- include('../partials/user/Script') %>
 
     <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        const form = document.getElementById("loginForm");
-        const emailInput = document.getElementById("email-address");
-        const emailError = document.getElementById("email-error");
-        const passwordError = document.getElementById("password-error");
-        const serverMessage = document.getElementById("server-message");
-        const passwordInput = document.getElementById("password");
-        const togglePassword = document.getElementById("togglePassword");
-        const eyeOpen = document.getElementById("eyeOpen");
-        const eyeClosed = document.getElementById("eyeClosed");
+      $(document).ready(function () {
+        const $form = $("#loginForm");
+        const $emailInput = $("#email-address");
+        const $emailError = $("#email-error");
+        const $passwordInput = $("#password");
+        const $passwordError = $("#password-error");
+        const $serverMessage = $("#server-message");
+        const $togglePassword = $("#togglePassword");
+        const $eyeOpen = $("#eyeOpen");
+        const $eyeClosed = $("#eyeClosed");
 
-        passwordInput.type = "password";
-        eyeOpen.classList.add("hidden");
-        eyeClosed.classList.remove("hidden");
+        $passwordInput.attr("type", "password");
+        $eyeOpen.addClass("hidden");
+        $eyeClosed.removeClass("hidden");
 
-        togglePassword.addEventListener("click", () => {
-          const isPassword = passwordInput.type === "password";
-          passwordInput.type = isPassword ? "text" : "password";
+        $togglePassword.on("click", function () {
+          const currentType = $passwordInput.attr("type");
+          const isPassword = currentType === "password";
 
-          eyeOpen.classList.toggle("hidden", !isPassword);
-          eyeClosed.classList.toggle("hidden", isPassword);
+          $passwordInput.attr("type", isPassword ? "text" : "password");
+          $eyeOpen.toggleClass("hidden", !isPassword);
+          $eyeClosed.toggleClass("hidden", isPassword);
         });
 
         function validateEmail(email) {
@@ -196,198 +197,196 @@
           return re.test(email);
         }
 
-        function showError(input, errorElement, message) {
-          input.classList.remove("border-gray-300", "focus:ring-gray-900");
-          input.classList.add("border-red-500", "focus:ring-red-500");
-          errorElement.textContent = message;
-          errorElement.classList.remove("hidden");
+        function showError($input, $errorElement, message) {
+          $input
+            .removeClass("border-gray-300 focus:ring-gray-900")
+            .addClass("border-red-500 focus:ring-red-500");
+          $errorElement.text(message).removeClass("hidden");
         }
 
-        function clearError(input, errorElement) {
-          input.classList.remove("border-red-500", "focus:ring-red-500");
-          input.classList.add("border-gray-300", "focus:ring-gray-900");
-          errorElement.textContent = "";
-          errorElement.classList.add("hidden");
+        function clearError($input, $errorElement) {
+          $input
+            .removeClass("border-red-500 focus:ring-red-500")
+            .addClass("border-gray-300 focus:ring-gray-900");
+          $errorElement.text("").addClass("hidden");
         }
 
         function showServerMessage(message, type = "error") {
-          serverMessage.textContent = message;
-          serverMessage.classList.remove("hidden");
+          $serverMessage.text(message).removeClass("hidden");
           if (type === "success") {
-            serverMessage.classList.remove("bg-red-100", "text-red-700");
-            serverMessage.classList.add("bg-green-100", "text-green-700");
+            $serverMessage
+              .removeClass("bg-red-100 text-red-700")
+              .addClass("bg-green-100 text-green-700");
           } else {
-            serverMessage.classList.remove("bg-green-100", "text-green-700");
-            serverMessage.classList.add("bg-red-100", "text-red-700");
+            $serverMessage
+              .removeClass("bg-green-100 text-green-700")
+              .addClass("bg-red-100 text-red-700");
           }
         }
 
         function clearServerMessage() {
-          serverMessage.textContent = "";
-          serverMessage.classList.add("hidden");
+          $serverMessage.text("").addClass("hidden");
         }
 
-        emailInput.addEventListener("blur", function () {
-          const email = emailInput.value.trim();
+        $emailInput.on("blur", function () {
+          const email = $(this).val().trim();
           clearServerMessage();
 
           if (email === "") {
-            showError(emailInput, emailError, "Vui lòng nhập địa chỉ email");
+            showError($emailInput, $emailError, "Vui lòng nhập địa chỉ email");
           } else if (!validateEmail(email)) {
-            showError(emailInput, emailError, "Địa chỉ email không hợp lệ");
+            showError($emailInput, $emailError, "Địa chỉ email không hợp lệ");
           } else {
-            clearError(emailInput, emailError);
+            clearError($emailInput, $emailError);
           }
         });
 
-        emailInput.addEventListener("input", function () {
+        $emailInput.on("input", function () {
           if (
-            emailInput.value.trim() !== "" &&
-            validateEmail(emailInput.value.trim())
+            $(this).val().trim() !== "" &&
+            validateEmail($(this).val().trim())
           ) {
-            clearError(emailInput, emailError);
+            clearError($emailInput, $emailError);
           }
         });
 
-        passwordInput.addEventListener("blur", function () {
-          const password = passwordInput.value;
+        $passwordInput.on("blur", function () {
+          const password = $(this).val();
           clearServerMessage();
 
           if (password === "") {
-            showError(passwordInput, passwordError, "Vui lòng nhập mật khẩu");
+            showError($passwordInput, $passwordError, "Vui lòng nhập mật khẩu");
           } else if (password.length < 6) {
             showError(
-              passwordInput,
-              passwordError,
+              $passwordInput,
+              $passwordError,
               "Mật khẩu phải có ít nhất 6 ký tự"
             );
           } else {
-            clearError(passwordInput, passwordError);
+            clearError($passwordInput, $passwordError);
           }
         });
 
-        passwordInput.addEventListener("input", function () {
-          if (passwordInput.value.length >= 6) {
-            clearError(passwordInput, passwordError);
+        $passwordInput.on("input", function () {
+          if ($(this).val().length >= 6) {
+            clearError($passwordInput, $passwordError);
           }
         });
 
-        form.addEventListener("submit", async function (e) {
+        $form.on("submit", function (e) {
           e.preventDefault();
           clearServerMessage();
 
           let isValid = true;
-          const email = emailInput.value.trim();
-          const password = passwordInput.value;
+          const email = $emailInput.val().trim();
+          const password = $passwordInput.val();
 
           if (email === "") {
-            showError(emailInput, emailError, "Vui lòng nhập địa chỉ email");
+            showError($emailInput, $emailError, "Vui lòng nhập địa chỉ email");
             isValid = false;
           } else if (!validateEmail(email)) {
-            showError(emailInput, emailError, "Địa chỉ email không hợp lệ");
+            showError($emailInput, $emailError, "Địa chỉ email không hợp lệ");
             isValid = false;
           } else {
-            clearError(emailInput, emailError);
+            clearError($emailInput, $emailError);
           }
 
           if (password === "") {
-            showError(passwordInput, passwordError, "Vui lòng nhập mật khẩu");
+            showError($passwordInput, $passwordError, "Vui lòng nhập mật khẩu");
             isValid = false;
           } else if (password.length < 6) {
             showError(
-              passwordInput,
-              passwordError,
+              $passwordInput,
+              $passwordError,
               "Mật khẩu phải có ít nhất 6 ký tự"
             );
             isValid = false;
           } else {
-            clearError(passwordInput, passwordError);
+            clearError($passwordInput, $passwordError);
           }
 
           if (isValid) {
-            const submitBtn = form.querySelector('button[type="submit"]');
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = "Đang đăng nhập...";
+            const $submitBtn = $form.find('button[type="submit"]');
+            const originalBtnText = $submitBtn.text();
 
-            try {
-              const response = await fetch("/auth/signin", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ email, password }),
-              });
+            $submitBtn.prop("disabled", true).text("Đang đăng nhập...");
 
-              const data = await response.json();
+            $.ajax({
+              url: "/auth/signin",
+              method: "POST",
+              contentType: "application/json",
+              data: JSON.stringify({
+                email,
+                password,
+              }),
+              dataType: "json",
+              success: function (data) {
+                if (data.success) {
+                  showServerMessage(data.message, "success");
+                  const userRole = data.data.role;
+                  let redirectUrl = userRole === "ADMIN" ? "/admin" : "/";
 
-              if (data.success) {
-                showServerMessage(data.message, "success");
-                const userRole = data.data.role;
-                let redirectUrl = "/";
-                if (userRole === "ADMIN") {
-                  redirectUrl = "/admin";
+                  setTimeout(() => {
+                    window.location.href = redirectUrl;
+                  }, 1000);
+                } else {
+                  showServerMessage(data.message, "error");
+
+                  if (
+                    data.message.includes(
+                      "Tài khoản của bạn chưa được xác thực"
+                    )
+                  ) {
+                    const $resendButton = $("<button>")
+                      .text("Gửi lại email xác thực")
+                      .addClass(
+                        "mt-3 inline-block px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
+                      )
+                      .on("click", function () {
+                        resendVerificationEmail(email);
+                      });
+
+                    $serverMessage.append("<br>", $resendButton);
+                  }
                 }
-                setTimeout(() => {
-                  window.location.href = redirectUrl;
-                }, 1000);
-              } else {
-                showServerMessage(data.message, "error");
-                if (
-                  data.message.includes("Tài khoản của bạn chưa được xác thực")
-                ) {
-                  const resendButton = document.createElement("button");
-                  resendButton.textContent = "Gửi lại email xác thực";
-                  resendButton.classList.add(
-                    "mt-3",
-                    "inline-block",
-                    "px-4",
-                    "py-2",
-                    "border",
-                    "border-gray-300",
-                    "text-gray-700",
-                    "rounded-lg",
-                    "hover:bg-gray-50",
-                    "transition"
-                  );
-                  resendButton.onclick = () => {
-                    // Gọi hàm gửi lại email
-                    resendVerificationEmail(email);
-                  };
-                  serverMessage.appendChild(document.createElement("br"));
-                  serverMessage.appendChild(resendButton);
-                }
-              }
-            } catch (error) {
-              console.error("Lỗi:", error);
-              showServerMessage("Đã xảy ra lỗi, vui lòng thử lại", "error");
-            } finally {
-              submitBtn.disabled = false;
-              submitBtn.innerHTML = "Đăng nhập";
-            }
+              },
+              error: function (xhr, status, error) {
+                console.error("Lỗi:", error);
+                showServerMessage("Đã xảy ra lỗi, vui lòng thử lại", "error");
+              },
+              complete: function () {
+                $submitBtn.prop("disabled", false).text("Đăng nhập");
+              },
+            });
           }
         });
 
-        async function resendVerificationEmail(emailToResend) {
+        function resendVerificationEmail(emailToResend) {
           clearServerMessage();
-          try {
-            const response = await fetch("/auth/resend-verification", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ email: emailToResend }),
-            });
-            const data = await response.json();
-            if (data.success) {
-              showServerMessage(
-                data.message + ". Vui lòng kiểm tra email của bạn.",
-                "success"
-              );
-            } else {
-              showServerMessage(data.message, "error");
-            }
-          } catch (err) {
-            console.error("Lỗi gửi lại email:", err);
-            showServerMessage("Đã xảy ra lỗi khi gửi lại email", "error");
-          }
+
+          $.ajax({
+            url: "/auth/resend-verification",
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({
+              email: emailToResend,
+            }),
+            dataType: "json",
+            success: function (data) {
+              if (data.success) {
+                showServerMessage(
+                  data.message + ". Vui lòng kiểm tra email của bạn.",
+                  "success"
+                );
+              } else {
+                showServerMessage(data.message, "error");
+              }
+            },
+            error: function (err) {
+              console.error("Lỗi gửi lại email:", err);
+              showServerMessage("Đã xảy ra lỗi khi gửi lại email", "error");
+            },
+          });
         }
       });
     </script>

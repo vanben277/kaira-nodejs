@@ -172,7 +172,6 @@ const orderSchema = new mongoose.Schema({
     versionKey: false
 });
 
-orderSchema.index({ order_number: 1 });
 orderSchema.index({ 'customer_info.email': 1 });
 orderSchema.index({ 'customer_info.phone': 1 });
 orderSchema.index({ status: 1, ordered_at: -1 });
