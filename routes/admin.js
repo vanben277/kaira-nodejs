@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const CategoriesController = require('../controllers/CategoriesController');
 const ProductsController = require('../controllers/ProductsController');
+const OrderController = require('../controllers/OrderController');
 const categoryUpload = require('../config/multerCategories');
 const productUpload = require('../config/multerProducts');
 const authMiddleware = require('../middleware/auth');
@@ -65,5 +66,9 @@ router.post('/products/restore/:id', ProductsController.restore);
 router.delete('/products/force-delete/:id', ProductsController.forceDelete);
 
 // -------------------------------------------------------------------
-
+// -----------------------------------don hang
+router.get('/orders', OrderController.index);
+router.get('/orders/detail/:id', OrderController.getDetailPopup);
+router.post('/orders/update-status', OrderController.updateStatus);
+// -------------------------------------------------------------------
 module.exports = router;

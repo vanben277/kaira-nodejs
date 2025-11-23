@@ -1,6 +1,6 @@
 const Order = require('../model/Orders');
 const Product = require('../model/Products');
-const Account = require('../model/Accounts');
+const mongoose = require('mongoose');
 
 class CheckoutController {
     // GET /checkout
@@ -19,7 +19,7 @@ class CheckoutController {
             const {
                 customer_info,
                 items,
-                payment_method,
+                payment_method = 'cod',
                 coupon_code
             } = req.body;
 
@@ -46,26 +46,14 @@ class CheckoutController {
                 const product = products.find(p => p._id.toString() === item.productId.toString());
                 if (!product) continue;
 
-
-                console.log('=== DEBUG ITEM ===');
-                console.log('Product:', product.name);
-                console.log('Item from cart:', JSON.stringify(item, null, 2));
-                console.log('Product has_variants:', product.has_variants);
-                console.log('Product variants count:', product.variants?.length);
-
                 let price = 0;
                 let image = product.thumbnail || '/images/default-product.jpg';
                 let colorName = null;
 
                 if (product.has_variants && item.variantId && item.size) {
-                    console.log('Looking for variantId:', item.variantId);
-                    console.log('Available variant IDs:', product.variants.map(v => v._id.toString()));
-
                     const variant = product.variants.find(v =>
                         v._id.toString() === item.variantId.toString()
                     );
-
-                    console.log('Found variant:', variant ? 'YES' : 'NO');
 
                     if (!variant) {
                         return res.status(400).json({ success: false, message: `Không tìm thấy biến thể của sản phẩm "${product.name}"` });
@@ -138,17 +126,17 @@ class CheckoutController {
                 shipping_fee,
                 discount,
                 total,
-                payment_method: payment_method || 'cod',
+                payment_method: payment_method,
+                payment_status: payment_method === 'bank_transfer' ? 'pending' : 'unpaid'
             });
 
             await order.save();
 
             for (const item of items) {
                 const product = products.find(p => p._id.toString() === item.productId.toString());
-
                 let result;
+
                 if (product.has_variants && item.variantId && item.size) {
-                    const mongoose = require('mongoose');
                     const variantObjectId = new mongoose.Types.ObjectId(item.variantId);
                     result = await Product.updateOne(
                         {
@@ -186,6 +174,19 @@ class CheckoutController {
                 }
             }
 
+            if (payment_method === 'bank_transfer') {
+                return res.status(201).json({
+                    success: true,
+                    message: 'Đặt hàng thành công! Vui lòng chuyển khoản để hoàn tất.',
+                    order: {
+                        order_number: order.order_number,
+                        total: order.total,
+                        _id: order._id
+                    },
+                    payment_method: 'bank_transfer'
+                });
+            }
+
             return res.status(201).json({
                 success: true,
                 message: 'Đặt hàng thành công!',
@@ -210,17 +211,43 @@ class CheckoutController {
     async orderSuccess(req, res) {
         try {
             const { orderId } = req.params;
-
-            const order = await Order.findById(orderId);
+            const order = await Order.findById(orderId).lean();
 
             if (!order) {
                 return res.redirect('/');
             }
 
-            res.render('user/OrderSuccess', { order });
+            res.render('user/OrderSuccess', {
+                order,
+                isPendingPayment: order.payment_method === 'bank_transfer' && order.payment_status === 'pending'
+            });
         } catch (error) {
             console.error('Error showing order success:', error);
             res.redirect('/');
+        }
+    }
+
+    // GET /order/:id/status
+    async getOrderStatus(req, res) {
+        try {
+            const { id } = req.params;
+            const order = await Order.findById(id).select('payment_status payment_method total order_number');
+
+            if (!order) {
+                return res.status(404).json({ success: false, message: 'Đơn hàng không tồn tại' });
+            }
+
+            res.json({
+                success: true,
+                paid: order.payment_status === 'paid',
+                pending: order.payment_status === 'pending',
+                payment_method: order.payment_method,
+                total: order.total,
+                order_number: order.order_number
+            });
+        } catch (error) {
+            console.error('Error getting order status:', error);
+            res.status(500).json({ success: false, message: 'Lỗi server' });
         }
     }
 
@@ -228,7 +255,6 @@ class CheckoutController {
     async trackOrder(req, res) {
         try {
             const { orderNumber } = req.params;
-
             const order = await Order.findOne({ order_number: orderNumber });
 
             if (!order) {
@@ -250,6 +276,77 @@ class CheckoutController {
             });
         }
     }
+
+    // [GET] /admin/orders
+    async index(req, res) {
+        try {
+            const page = parseInt(req.query.page) || 1;
+            const limit = parseInt(req.query.limit) || 10;
+            const skip = (page - 1) * limit;
+
+            const filter = {};
+            if (req.query.status && req.query.status !== 'all') filter.status = req.query.status;
+            if (req.query.payment && req.query.payment !== 'all') filter.payment_status = req.query.payment;
+            if (req.query.search) {
+                const search = req.query.search.trim();
+                filter.$or = [
+                    { order_number: { $regex: search, $options: 'i' } },
+                    { 'customer_info.full_name': { $regex: search, $options: 'i' } },
+                    { 'customer_info.phone': { $regex: search, $options: 'i' } }
+                ];
+            }
+
+            const totalOrders = await Order.countDocuments(filter);
+            const totalPages = Math.ceil(totalOrders / limit);
+
+            const orders = await Order.find(filter)
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(limit)
+                .lean();
+
+            res.render('admin/orders/index', {
+                orders,
+                moment: require('moment'),
+                pagination: {
+                    page,
+                    limit,
+                    totalPages,
+                    totalOrders
+                },
+                query: req.query
+            });
+        } catch (error) {
+            console.error('Lỗi lấy danh sách đơn hàng:', error);
+            res.status(500).render('errors/500');
+        }
+    }
+    // [GET] /admin/detail/:id
+    async getDetailPopup(req, res) {
+        try {
+            const order = await Order.findById(req.params.id).lean();
+            if (!order) return res.status(404).json({ success: false });
+            res.json(order);
+        } catch (err) {
+            res.status(500).json({ success: false });
+        }
+    }
+
+    // [POST] /admin/update-status
+    async updateStatus(req, res) {
+        try {
+            const { orderId, status, payment_status } = req.body;
+            const update = {};
+            if (status) update.status = status;
+            if (payment_status) update.payment_status = payment_status;
+
+            const order = await Order.findByIdAndUpdate(orderId, update, { new: true });
+            res.json({ success: true, order });
+        } catch (err) {
+            res.json({ success: false, message: err.message });
+        }
+    }
+
 }
 
 module.exports = new CheckoutController();

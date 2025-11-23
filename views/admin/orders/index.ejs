@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <title>Danh sách đơn hàng - Admin Kaira</title>
+    <%- include('../../partials/admin/Head') %>
+    <style>
+        .status-select, .payment-select {
+            min-width: 130px;
+            font-size: 0.875rem;
+        }
+        .badge-pending   { background: #fff3cd; color: #856404; }
+        .badge-confirmed { background: #d1ecf1; color: #0c5460; }
+        .badge-shipping  { background: #d4edda; color: #155724; }
+        .badge-delivered { background: #d1ecf1; color: #0c5460; }
+        .badge-cancelled { background: #f8d7da; color: #721c24; }
+        .badge-paid      { background: #d4edda; color: #155724; }
+        .badge-pending-pay { background: #fff3cd; color: #856404; }
+        .badge-unpaid    { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <div class="container-xxl position-relative bg-white d-flex p-0">
+        <%- include('../../partials/admin/Reload') %>
+        <%- include('../../partials/admin/Sidebar') %>
+
+        <div class="content">
+            <%- include('../../partials/admin/Header') %>
+
+            <div class="container-fluid pt-4 px-4">
+                <div class="row g-4">
+                    <div class="col-12">
+                        <div class="bg-light rounded h-100 p-4">
+                            <h6 class="mb-4">Danh sách đơn hàng</h6>
+                            <div class="row g-3 mb-4 align-items-center">
+                                <div class="col-md-4">
+                                    <input type="text" id="searchInput" class="form-control" placeholder="Tìm mã đơn, tên, SĐT..." value="<%= query.search || '' %>">
+                                </div>
+                                <div class="col-md-2">
+                                    <select id="statusFilter" class="form-select">
+                                        <option value="">Tất cả trạng thái</option>
+                                        <option value="pending"   <%= query.status==='pending' ? 'selected' : '' %>>Chờ xác nhận</option>
+                                        <option value="confirmed" <%= query.status==='confirmed' ? 'selected' : '' %>>Đã xác nhận</option>
+                                        <option value="shipping"  <%= query.status==='shipping' ? 'selected' : '' %>>Đang giao</option>
+                                        <option value="delivered" <%= query.status==='delivered' ? 'selected' : '' %>>Hoàn thành</option>
+                                        <option value="cancelled" <%= query.status==='cancelled' ? 'selected' : '' %>>Đã hủy</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <select id="paymentFilter" class="form-select">
+                                        <option value="">Tất cả thanh toán</option>
+                                        <option value="paid"    <%= query.payment==='paid' ? 'selected' : '' %>>Đã thanh toán</option>
+                                        <option value="pending"  <%= query.payment==='pending' ? 'selected' : '' %>>Chờ chuyển khoản</option>
+                                        <option value="unpaid"   <%= query.payment==='unpaid' ? 'selected' : '' %>>Chưa thanh toán</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <select id="limitSelect" class="form-select">
+                                        <option value="10"  <%= pagination.limit == 10 ? 'selected' : '' %>>10</option>
+                                        <option value="25"  <%= pagination.limit == 25 ? 'selected' : '' %>>25</option>
+                                        <option value="50"  <%= pagination.limit == 50 ? 'selected' : '' %>>50</option>
+                                        <option value="100" <%= pagination.limit == 100 ? 'selected' : '' %>>100</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2 text-muted">
+                                    Tổng: <strong><%= pagination.totalOrders %></strong> đơn
+                                </div>
+                            </div>
+
+                            <% if (orders.length === 0) { %>
+                                <div class="alert alert-info text-center">Chưa có đơn hàng nào phù hợp.</div>
+                            <% } else { %>
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle">
+                                        <thead class="table-dark">
+                                            <tr>
+                                                <th>STT</th>
+                                                <th>Mã đơn</th>
+                                                <th>Khách hàng</th>
+                                                <th>Tổng tiền</th>
+                                                <th>PTTT</th>
+                                                <th>Thanh toán</th>
+                                                <th>Trạng thái đơn</th>
+                                                <th>Ngày đặt</th>
+                                                <th>Thao tác</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% orders.forEach((order, index) => { %>
+                                            <tr data-order-id="<%= order._id %>">
+                                                <td><%= (pagination.page - 1) * pagination.limit + index + 1 %></td>
+                                                <td><strong class="text-primary">#<%= order.order_number %></strong></td>
+                                                <td>
+                                                    <div><strong><%= order.customer_info.full_name %></strong></div>
+                                                    <small class="text-muted"><%= order.customer_info.phone %></small>
+                                                </td>
+                                                <td class="text-end fw-bold text-danger">
+                                                    <%= order.total.toLocaleString('vi-VN') %>đ
+                                                </td>
+                                                <td>
+                                                    <span class="badge <%= order.payment_method === 'cod' ? 'bg-secondary' : 'bg-info' %>">
+                                                        <%= order.payment_method === 'cod' ? 'COD' : 'Chuyển khoản' %>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <select class="form-select form-select-sm payment-select" data-id="<%= order._id %>">
+                                                        <option value="unpaid"   <%= order.payment_status==='unpaid' ? 'selected' : '' %>>Chưa thanh toán</option>
+                                                        <option value="pending"  <%= order.payment_status==='pending' ? 'selected' : '' %>>Chờ chuyển khoản</option>
+                                                        <option value="paid"     <%= order.payment_status==='paid' ? 'selected' : '' %>>Đã thanh toán</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <select class="form-select form-select-sm status-select" data-id="<%= order._id %>">
+                                                        <option value="pending"   <%= order.status==='pending' ? 'selected' : '' %>>Chờ xác nhận</option>
+                                                        <option value="confirmed" <%= order.status==='confirmed' ? 'selected' : '' %>>Đã xác nhận</option>
+                                                        <option value="shipping"  <%= order.status==='shipping' ? 'selected' : '' %>>Đang giao</option>
+                                                        <option value="delivered" <%= order.status==='delivered' ? 'selected' : '' %>>Hoàn thành</option>
+                                                        <option value="cancelled" <%= order.status==='cancelled' ? 'selected' : '' %>>Đã hủy</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <small><%= moment(order.createdAt).format('DD/MM/YYYY') %><br>
+                                                           <%= moment(order.createdAt).format('HH:mm') %></small>
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-info view-detail-btn" data-id="<%= order._id %>">
+                                                        Xem
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <% }) %>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <% if (pagination.totalPages > 1) { %>
+                                    <nav class="mt-4">
+                                        <ul class="pagination justify-content-center">
+                                            <li class="page-item <%= pagination.page === 1 ? 'disabled' : '' %>">
+                                                <a class="page-link" href="<%= pagination.page > 1 ? buildUrl(pagination.page - 1) : '#' %>">Trước</a>
+                                            </li>
+                                            <% for(let i = Math.max(1, pagination.page - 2); i <= Math.min(pagination.totalPages, pagination.page + 2); i++) { %>
+                                                <li class="page-item <%= i === pagination.page ? 'active' : '' %>">
+                                                    <a class="page-link" href="<%= buildUrl(i) %>"><%= i %></a>
+                                                </li>
+                                            <% } %>
+                                            <li class="page-item <%= pagination.page === pagination.totalPages ? 'disabled' : '' %>">
+                                                <a class="page-link" href="<%= pagination.page < pagination.totalPages ? buildUrl(pagination.page + 1) : '#' %>">Sau</a>
+                                            </li>
+                                        </ul>
+                                    </nav>
+                                <% } %>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <%- include('../../partials/admin/Footer') %>
+        </div>
+    </div>
+
+    <div class="modal fade" id="orderDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Chi tiết đơn hàng #<span id="modalOrderNumber"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="modalOrderContent">
+                    <div class="text-center"><div class="spinner-border"></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../../partials/admin/Script') %>
+
+    <script>
+        function getUrl(page = 1) {
+            const params = new URLSearchParams();
+            params.set('page', page);
+            params.set('limit', $('#limitSelect').val());
+            if ($('#searchInput').val()) params.set('search', $('#searchInput').val());
+            if ($('#statusFilter').val()) params.set('status', $('#statusFilter').val());
+            if ($('#paymentFilter').val()) params.set('payment', $('#paymentFilter').val());
+            return '/admin/orders?' + params.toString();
+        }
+
+        $('#searchInput, #statusFilter, #paymentFilter, #limitSelect').on('change input', function() {
+            if (this.id === 'searchInput') {
+                clearTimeout(window.searchTimeout);
+                window.searchTimeout = setTimeout(() => location.href = getUrl(1), 600);
+            } else {
+                location.href = getUrl(1);
+            }
+        });
+
+        $(document).on('change', '.status-select', function() {
+            const orderId = $(this).data('id');
+            const newStatus = $(this).val();
+            $.post('/admin/orders/update-status', { orderId, status: newStatus }, function(res) {
+                if (res.success) {
+                    toastr.success('Cập nhật trạng thái thành công!');
+                } else {
+                    toastr.error(res.message || 'Lỗi cập nhật');
+                    location.reload();
+                }
+            });
+        });
+
+        $(document).on('change', '.payment-select', function() {
+            const orderId = $(this).data('id');
+            const newPayment = $(this).val();
+            $.post('/admin/orders/update-status', { orderId, payment_status: newPayment }, function(res) {
+                if (res.success) {
+                    toastr.success('Cập nhật thanh toán thành công!');
+                } else {
+                    toastr.error(res.message || 'Lỗi cập nhật');
+                    location.reload();
+                }
+            });
+        });
+
+        $(document).on('click', '.view-detail-btn', function() {
+            const orderId = $(this).data('id');
+            $('#modalOrderNumber').text('...');
+            $('#modalOrderContent').html('<div class="text-center"><div class="spinner-border text-primary"></div></div>');
+            $('#orderDetailModal').modal('show');
+
+            $.get('/admin/orders/detail/' + orderId, function(order) {
+                $('#modalOrderNumber').text(order.order_number);
+                const c = order.customer_info;
+                let itemsHtml = '';
+                order.items.forEach(item => {
+                    itemsHtml += `
+                        <div class="d-flex align-items-center py-3 border-bottom">
+                            <img src="${item.product_image || '/images/default-product.jpg'}" class="me-3" style="width:60px;height:60px;object-fit:cover;border-radius:5px;">
+                            <div class="flex-fill">
+                                <strong>${item.product_name}</strong>
+                                ${item.variant_color ? `<br><small>Màu: ${item.variant_color}</small>` : ''}
+                                ${item.size ? `<small> | Size: ${item.size}</small>` : ''}
+                            </div>
+                            <div class="text-end">
+                                <div>x${item.quantity}</div>
+                                <strong>${item.total.toLocaleString('vi-VN')}đ</strong>
+                            </div>
+                        </div>`;
+                });
+
+                $('#modalOrderContent').html(`
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Thông tin khách hàng</h6>
+                            <hr>
+                            <p><strong>Họ tên:</strong> ${c.full_name}</p>
+                            <p><strong>SĐT:</strong> ${c.phone}</p>
+                            <p><strong>Địa chỉ:</strong> ${c.address}</p>
+                            ${c.note ? `<p><strong>Ghi chú:</strong> <i>"${c.note}"</i></p>` : ''}
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Tổng quan đơn hàng</h6>
+                            <hr>
+                            <p><strong>Tạm tính:</strong> ${order.subtotal.toLocaleString('vi-VN')}đ</p>
+                            <p><strong>Phí ship:</strong> ${order.shipping_fee.toLocaleString('vi-VN')}đ</p>
+                            <p><strong>Tổng cộng:</strong> <span class="text-danger fs-5">${order.total.toLocaleString('vi-VN')}đ</span></p>
+                        </div>
+                    </div>
+                    <hr>
+                    <h6>Sản phẩm</h6>
+                    ${itemsHtml}
+                `);
+            });
+        });
+    </script>
+</body>
+</html>
