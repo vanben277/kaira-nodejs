@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <title>Quản lý khách hàng - Admin Kaira</title>
+    <%- include('../../partials/admin/Head') %>
+    <style>
+      .status-toggle-select {
+        min-width: 130px;
+        font-size: 0.875rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container-xxl position-relative bg-white d-flex p-0">
+      <%- include('../../partials/admin/Reload') %> <%-
+      include('../../partials/admin/Sidebar') %>
+
+      <div class="content">
+        <%- include('../../partials/admin/Header') %>
+
+        <div class="container-fluid pt-4 px-4">
+          <div class="row g-4">
+            <div class="col-12">
+              <div class="bg-light rounded h-100 p-4">
+                <h6 class="mb-4">Quản lý khách hàng</h6>
+
+                <!-- Bộ lọc (tự động tìm kiếm, không cần nút) -->
+                <div class="row g-3 mb-4 align-items-center">
+                  <div class="col-md-5">
+                    <input
+                      type="text"
+                      id="searchInput"
+                      class="form-control"
+                      placeholder="Tìm email, họ tên..."
+                      value=""
+                    />
+                  </div>
+                  <div class="col-md-3">
+                    <select id="statusFilter" class="form-select">
+                      <option value="">Tất cả trạng thái</option>
+                      <option value="active">Đang hoạt động</option>
+                      <option value="inactive">Bị khóa</option>
+                    </select>
+                  </div>
+                  <div class="col-md-2">
+                    <select id="limitSelect" class="form-select">
+                      <option value="10">10</option>
+                      <option value="25">25</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                    </select>
+                  </div>
+                  <div class="col-md-2 text-muted text-end">
+                    Tổng: <strong id="totalCustomers">0</strong> khách
+                  </div>
+                </div>
+
+                <!-- Bảng khách hàng -->
+                <div class="table-responsive">
+                  <table class="table table-hover align-middle">
+                    <thead class="table-dark">
+                      <tr>
+                        <th>STT</th>
+                        <th>Avatar</th>
+                        <th>Họ tên</th>
+                        <th>Email</th>
+                        <th>Số điện thoại</th>
+                        <th>Ngày đăng ký</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                      </tr>
+                    </thead>
+                    <tbody id="customersTableBody">
+                      <!-- Load bằng AJAX -->
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- Phân trang -->
+                <nav class="mt-4">
+                  <ul class="pagination justify-content-center" id="pagination">
+                    <!-- Load bằng JS -->
+                  </ul>
+                </nav>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <%- include('../../partials/admin/Footer') %>
+      </div>
+    </div>
+
+    <!-- Popup chi tiết khách hàng -->
+    <div class="modal fade" id="customerDetailModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Chi tiết khách hàng</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body" id="customerDetailContent">
+            <div class="text-center">
+              <div class="spinner-border text-primary"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <%- include('../../partials/admin/Script') %>
+
+    <script>
+      let currentPage = 1;
+
+      function loadCustomers(page = 1) {
+        currentPage = page;
+        const search = $("#searchInput").val().trim();
+        const status = $("#statusFilter").val();
+        const limit = $("#limitSelect").val();
+
+        $.get(
+          "/admin/accounts/customers",
+          {
+            page: page,
+            limit: limit,
+            search: search,
+            status: status,
+          },
+          function (res) {
+            if (!res.success) return alert("Lỗi tải dữ liệu");
+
+            const tbody = $("#customersTableBody");
+            tbody.empty();
+
+            $("#totalCustomers").text(res.pagination.total_items);
+
+            res.data.forEach((customer, index) => {
+              const row = `
+                        <tr data-id="${customer._id}">
+                            <td>${(page - 1) * limit + index + 1}</td>
+                            <td>
+                                <img src="${
+                                  customer.avatar ||
+                                  "/images/default-avatar.png"
+                                }" 
+                                     class="rounded-circle" style="width:40px;height:40px;object-fit:cover;">
+                            </td>
+                            <td><strong>${customer.first_name} ${
+                customer.last_name
+              }</strong></td>
+                            <td>${customer.email}</td>
+                            <td>${
+                              customer.phone ||
+                              '<span class="text-muted">Chưa có</span>'
+                            }</td>
+                            <td>
+                                <small>${moment(customer.createdAt).format(
+                                  "DD/MM/YYYY"
+                                )}<br>
+                                ${moment(customer.createdAt).format(
+                                  "HH:mm"
+                                )}</small>
+                            </td>
+                            <td>
+                                <select class="form-select form-select-sm status-toggle-select" data-id="${
+                                  customer._id
+                                }">
+                                    <option value="true"  ${
+                                      customer.is_active ? "selected" : ""
+                                    }>Đang hoạt động</option>
+                                    <option value="false" ${
+                                      !customer.is_active ? "selected" : ""
+                                    }>Bị khóa</option>
+                                </select>
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-info view-customer-btn" data-id="${
+                                  customer._id
+                                }">
+                                    Xem
+                                </button>
+                            </td>
+                        </tr>`;
+              tbody.append(row);
+            });
+
+            // Phân trang
+            const pagination = $("#pagination");
+            pagination.empty();
+
+            if (res.pagination.total_pages > 1) {
+              if (page > 1) {
+                pagination.append(
+                  `<li class="page-item"><a class="page-link" href="#" data-page="${
+                    page - 1
+                  }">Trước</a></li>`
+                );
+              }
+
+              for (
+                let i = Math.max(1, page - 2);
+                i <= Math.min(res.pagination.total_pages, page + 2);
+                i++
+              ) {
+                pagination.append(
+                  `<li class="page-item ${i === page ? "active" : ""}">
+                                <a class="page-link" href="#" data-page="${i}">${i}</a>
+                            </li>`
+                );
+              }
+
+              if (page < res.pagination.total_pages) {
+                pagination.append(
+                  `<li class="page-item"><a class="page-link" href="#" data-page="${
+                    page + 1
+                  }">Sau</a></li>`
+                );
+              }
+            }
+          }
+        );
+      }
+
+      let searchTimeout;
+      $("#searchInput").on("input", function () {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => loadCustomers(1), 500);
+      });
+
+      $("#statusFilter, #limitSelect").on("change", () => loadCustomers(1));
+
+      $(document).on("click", "#pagination a", function (e) {
+        e.preventDefault();
+        const page = $(this).data("page");
+        if (page) loadCustomers(page);
+      });
+
+      $(document).on("change", ".status-toggle-select", function () {
+        const userId = $(this).data("id");
+        const isActive = $(this).val() === "true";
+
+        $.ajax({
+          url: `/admin/accounts/${userId}/toggle-status`,
+          method: "PUT",
+          success: function (res) {
+            if (res.success) {
+              toastr.success(res.message);
+            } else {
+              toastr.error(res.message);
+              loadCustomers(currentPage);
+            }
+          },
+          error: () => {
+            toastr.error("Lỗi hệ thống");
+            loadCustomers(currentPage);
+          },
+        });
+      });
+
+      $(document).on("click", ".view-customer-btn", function () {
+        const userId = $(this).data("id");
+        $("#customerDetailContent").html(
+          '<div class="text-center"><div class="spinner-border text-primary"></div></div>'
+        );
+        $("#customerDetailModal").modal("show");
+
+        $.get(`/admin/accounts/${userId}`, function (res) {
+          if (!res.success) return alert("Không tải được thông tin");
+
+          const c = res.data;
+          const fullName = `${c.first_name} ${c.last_name}`.trim();
+
+          $("#customerDetailContent").html(`
+                    <div class="row">
+                        <div class="col-md-4 text-center">
+                            <img src="${
+                              c.avatar || "/images/default-avatar.png"
+                            }" 
+                                 class="img-fluid rounded-circle mb-3" style="width:120px;height:120px;object-fit:cover;">
+                            <h5>${fullName}</h5>
+                            <span class="badge ${
+                              c.is_active ? "bg-success" : "bg-danger"
+                            }">
+                                ${c.is_active ? "Hoạt động" : "Bị khóa"}
+                            </span>
+                        </div>
+                        <div class="col-md-8">
+                            <table class="table table-borderless">
+                                <tr><td><strong>Email:</strong></td><td>${
+                                  c.email
+                                }</td></tr>
+                                <tr><td><strong>Số điện thoại:</strong></td><td>${
+                                  c.phone ||
+                                  '<em class="text-muted">Chưa cập nhật</em>'
+                                }</td></tr>
+                                <tr><td><strong>Địa chỉ:</strong></td><td>${
+                                  c.address ||
+                                  '<em class="text-muted">Chưa cập nhật</em>'
+                                }</td></tr>
+                                <tr><td><strong>Giới tính:</strong></td><td>${
+                                  c.gender
+                                    ? c.gender === "male"
+                                      ? "Nam"
+                                      : c.gender === "female"
+                                      ? "Nữ"
+                                      : "Khác"
+                                    : '<em class="text-muted">Chưa chọn</em>'
+                                }</td></tr>
+                                <tr><td><strong>Ngày sinh:</strong></td><td>${
+                                  c.date_of_birth
+                                    ? moment(c.date_of_birth).format(
+                                        "DD/MM/YYYY"
+                                      )
+                                    : '<em class="text-muted">Chưa có</em>'
+                                }</td></tr>
+                                <tr><td><strong>Ngày đăng ký:</strong></td><td>${moment(
+                                  c.createdAt
+                                ).format("DD/MM/YYYY HH:mm")}</td></tr>
+                            </table>
+                        </div>
+                    </div>
+                `);
+        });
+      });
+
+      $(document).ready(() => loadCustomers(1));
+    </script>
+  </body>
+</html>

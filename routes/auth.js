@@ -1,8 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const AccountsController = require('../controllers/AuthController');
-const upload = require('../config/multerAccounts');
-
 
 router.get('/signin', (req, res) => {
     res.render('auth/SignIn');

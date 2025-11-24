@@ -3,12 +3,14 @@ const router = express.Router();
 const CategoriesController = require('../controllers/CategoriesController');
 const ProductsController = require('../controllers/ProductsController');
 const OrderController = require('../controllers/OrderController');
+const AccountController = require('../controllers/AccountController');
 const categoryUpload = require('../config/multerCategories');
 const productUpload = require('../config/multerProducts');
-const authMiddleware = require('../middleware/auth');
+const accountUpload = require('../config/multerAccounts');
+const { isAuthenticated, isAdmin, isAdminOrCustomer } = require('../middleware/auth');
 
 // phan quyen
-router.use(authMiddleware.isAdmin);
+router.use(isAdmin);
 
 // -----------------------------------dashboard
 router.get('/', (req, res) => {
@@ -70,5 +72,30 @@ router.delete('/products/force-delete/:id', ProductsController.forceDelete);
 router.get('/orders', OrderController.index);
 router.get('/orders/detail/:id', OrderController.getDetailPopup);
 router.post('/orders/update-status', OrderController.updateStatus);
+// -------------------------------------------------------------------
+
+
+
+// -----------------------------------tai khoan
+router.get('/accounts', (req, res) => {
+  res.render('admin/accounts/index');
+});
+
+router.get('/accounts/profile', isAuthenticated, (req, res) => {
+  res.render('admin/profile/MyInfoAndChangePassword');
+});
+
+router.get('/accounts/customers', isAdmin, AccountController.getCustomers);
+
+router.get('/accounts/me', isAuthenticated, AccountController.getMyAccount);
+
+router.put('/accounts/update-profile', isAuthenticated, accountUpload.single('avatar'), AccountController.updateProfile);
+
+router.put('/accounts/change-password', isAuthenticated, AccountController.changePassword);
+
+router.get('/accounts/:id', isAdminOrCustomer, AccountController.getAccountById);
+
+router.put('/accounts/:id/toggle-status', isAdmin, AccountController.toggleAccountStatus);
+
 // -------------------------------------------------------------------
 module.exports = router;

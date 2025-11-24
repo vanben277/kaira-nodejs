@@ -186,7 +186,8 @@ class AccountsController {
                 });
             }
 
-            const account = await Account.findOne({ email: email.toLowerCase() }).select('+password');
+            const account = await Account.findOne({ email: email.toLowerCase() })
+                .select('+password');
 
             if (!account || !(await account.comparePassword(password))) {
                 return res.status(401).json({
@@ -198,7 +199,14 @@ class AccountsController {
             if (!account.is_verified) {
                 return res.status(403).json({
                     success: false,
-                    message: 'Tài khoản của bạn chưa được xác thực. Vui lòng kiểm tra email để xác thực tài khoản.'
+                    message: 'Tài khoản chưa được xác thực. Vui lòng kiểm tra email để xác thực.'
+                });
+            }
+
+            if (!account.is_active) {
+                return res.status(403).json({
+                    success: false,
+                    message: 'Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.'
                 });
             }
 
@@ -208,11 +216,9 @@ class AccountsController {
             req.session.userId = account._id;
             req.session.email = account.email;
             req.session.role = account.role;
-            const fullName = `${account.first_name} ${account.last_name}`;
-            req.session.fullName = fullName;
+            req.session.fullName = `${account.first_name} ${account.last_name}`;
             req.session.avatar = account.avatar;
 
-            // Đăng nhập thành công
             res.status(200).json({
                 success: true,
                 message: 'Đăng nhập thành công!',

@@ -323,20 +323,17 @@
               success: function (data) {
                 if (data.success) {
                   showServerMessage(data.message, "success");
+
                   const userRole = data.data.role;
-                  let redirectUrl = userRole === "ADMIN" ? "/admin" : "/";
+                  const redirectUrl = userRole === "ADMIN" ? "/admin" : "/";
 
                   setTimeout(() => {
                     window.location.href = redirectUrl;
-                  }, 1000);
+                  }, 800);
                 } else {
                   showServerMessage(data.message, "error");
 
-                  if (
-                    data.message.includes(
-                      "Tài khoản của bạn chưa được xác thực"
-                    )
-                  ) {
+                  if (data.message.includes("chưa được xác thực")) {
                     const $resendButton = $("<button>")
                       .text("Gửi lại email xác thực")
                       .addClass(
@@ -348,10 +345,22 @@
 
                     $serverMessage.append("<br>", $resendButton);
                   }
+
+                  if (data.message.includes("bị khóa")) {
+                    const $supportButton = $("<button>")
+                      .text("Liên hệ quản trị viên")
+                      .addClass(
+                        "mt-3 inline-block px-4 py-2 border border-red-300 text-red-700 rounded-lg hover:bg-red-50 transition"
+                      )
+                      .on("click", function () {
+                        window.location.href = "/support";
+                      });
+
+                    $serverMessage.append("<br>", $supportButton);
+                  }
                 }
               },
-              error: function (xhr, status, error) {
-                console.error("Lỗi:", error);
+              error: function () {
                 showServerMessage("Đã xảy ra lỗi, vui lòng thử lại", "error");
               },
               complete: function () {
@@ -360,7 +369,6 @@
             });
           }
         });
-
         function resendVerificationEmail(emailToResend) {
           clearServerMessage();
 

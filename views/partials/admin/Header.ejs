@@ -13,59 +13,28 @@
       placeholder="Tìm kiếm nhanh..."
     />
   </form>
+
   <div class="navbar-nav align-items-center ms-auto">
     <div class="nav-item dropdown">
       <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
         <img
           class="rounded-circle me-lg-2"
-          src="<%= session.avatar ? session.avatar : '/images/nuben.jpg' %>"
-          alt=""
-          style="width: 40px; height: 40px"
+          id="navbarAvatar"
+          src="/images/nuben.jpg"
+          alt="Avatar"
+          style="width: 40px; height: 40px; object-fit: cover"
         />
-        <span class="d-none d-lg-inline-flex">
-          <% if (session.fullName) { %> <%= session.fullName %> <% } else if
-          (session.email) { %> <%= session.email.split('@')[0] %> <% } else { %>
-          User <% } %>
-        </span>
+        <span class="d-none d-lg-inline-flex" id="navbarName">Đang tải...</span>
       </a>
       <div
         class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0"
       >
-        <a href="#" class="dropdown-item">My Profile</a>
-        <a href="#" class="dropdown-item">Settings</a>
+        <a href="/admin/accounts/profile" class="dropdown-item"
+          >Thông tin cá nhân</a
+        >
         <a href="#" id="adminLogoutBtn" class="dropdown-item">Đăng xuất</a>
       </div>
     </div>
   </div>
 </nav>
 <!-- Navbar End -->
-
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const adminLogoutBtn = document.getElementById("adminLogoutBtn");
-
-    if (adminLogoutBtn) {
-      adminLogoutBtn.addEventListener("click", async (e) => {
-        e.preventDefault();
-
-        try {
-          const response = await fetch("/auth/logout", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
-          const data = await response.json();
-          if (data.success) {
-            window.location.href = data.redirect || "/auth/signin";
-          } else {
-            alert(data.message);
-          }
-        } catch (error) {
-          console.error("Lỗi khi đăng xuất:", error);
-          alert("Đã xảy ra lỗi khi đăng xuất.");
-        }
-      });
-    }
-  });
-</script>

@@ -254,19 +254,31 @@ class ProductsController {
             const page = parseInt(req.query.page) || 1;
             const limit = parseInt(req.query.limit) || 10;
             const skip = (page - 1) * limit;
+            const categoryFilter = req.query.category || '';
 
-            const totalProducts = await Product.countDocuments();
+            let query = {};
+            if (categoryFilter && categoryFilter !== 'all') {
+                query.category_id = categoryFilter;
+            }
+
+            const totalProducts = await Product.countDocuments(query);
             const totalPages = Math.ceil(totalProducts / limit);
 
-            const products = await Product.find()
+            const products = await Product.find(query)
                 .populate('category_id', 'name')
                 .sort({ createdAt: -1 })
                 .skip(skip)
                 .limit(limit);
 
+            const childrenCategories = await Category.find({
+                parent_id: { $ne: null }
+            }).populate('parent_id', 'name').sort({ name: 1 });
+
             res.render('admin/products/index', {
                 products,
                 moment: require('moment'),
+                childrenCategories,
+                currentCategory: categoryFilter,
                 pagination: {
                     page: page,
                     limit: limit,
