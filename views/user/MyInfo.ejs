@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <title>Thông Tin Tài Khoản - Kaira</title>
+    <%- include('../partials/user/Head') %>
+    <link rel="stylesheet" href="/css/my_info.css" />
+  </head>
+
+  <body>
+    <%- include('../partials/user/SVGIcon') %> <%-
+    include('../partials/user/Search') %> <%- include('../partials/user/Header')
+    %>
+
+    <div class="profile-container">
+      <div class="container">
+        <div class="row">
+          <!-- Sidebar -->
+          <div class="col-lg-3">
+            <div class="profile-sidebar">
+              <div class="avatar-upload-wrapper">
+                <img
+                  src="/images/nuben.jpg"
+                  alt="Avatar"
+                  class="profile-avatar"
+                  id="avatarPreview"
+                />
+                <label for="avatarInput" class="avatar-upload-btn">
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path
+                      d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
+                    />
+                  </svg>
+                </label>
+                <input
+                  type="file"
+                  id="avatarInput"
+                  accept="image/*"
+                  style="display: none"
+                />
+              </div>
+              <h5 class="profile-name" id="userName">Loading...</h5>
+              <p class="profile-email" id="userEmail">Loading...</p>
+
+              <ul class="nav nav-tabs nav-tabs-custom flex-column">
+                <li class="nav-item">
+                  <a
+                    class="nav-link active"
+                    data-bs-toggle="tab"
+                    href="#profile-tab"
+                  >
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      style="margin-right: 10px"
+                    >
+                      <path
+                        d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+                      />
+                    </svg>
+                    Thông Tin Cá Nhân
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" data-bs-toggle="tab" href="#orders-tab">
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      style="margin-right: 10px"
+                    >
+                      <use xlink:href="#shopping-bag"></use>
+                    </svg>
+                    Đơn Hàng Của Tôi
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" data-bs-toggle="tab" href="#password-tab">
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      style="margin-right: 10px"
+                    >
+                      <path
+                        d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"
+                      />
+                    </svg>
+                    Đổi Mật Khẩu
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Content -->
+          <div class="col-lg-9">
+            <div class="tab-content">
+              <!-- Profile Tab -->
+              <div class="tab-pane fade show active" id="profile-tab">
+                <div class="content-box">
+                  <h4 class="mb-4">Thông Tin Cá Nhân</h4>
+                  <form id="profileForm">
+                    <div class="row">
+                      <div class="col-md-6 mb-3">
+                        <label class="form-label">Họ</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="lastName"
+                          name="last_name"
+                          required
+                        />
+                      </div>
+                      <div class="col-md-6 mb-3">
+                        <label class="form-label">Tên</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="firstName"
+                          name="first_name"
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6 mb-3">
+                        <label class="form-label">Email</label>
+                        <input
+                          type="email"
+                          class="form-control"
+                          id="email"
+                          disabled
+                        />
+                      </div>
+                      <div class="col-md-6 mb-3">
+                        <label class="form-label">Số Điện Thoại</label>
+                        <input
+                          type="tel"
+                          class="form-control"
+                          id="phone"
+                          name="phone"
+                        />
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6 mb-3">
+                        <label class="form-label">Ngày Sinh</label>
+                        <input
+                          type="date"
+                          class="form-control"
+                          id="dateOfBirth"
+                          name="date_of_birth"
+                        />
+                      </div>
+                      <div class="col-md-6 mb-3">
+                        <label class="form-label">Giới Tính</label>
+                        <select class="form-control" id="gender" name="gender">
+                          <option value="">Chọn giới tính</option>
+                          <option value="male">Nam</option>
+                          <option value="female">Nữ</option>
+                          <option value="other">Khác</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Địa Chỉ</label>
+                      <textarea
+                        class="form-control"
+                        id="address"
+                        name="address"
+                        rows="3"
+                      ></textarea>
+                    </div>
+                    <button type="submit" class="btn-save">Cập Nhật</button>
+                  </form>
+                </div>
+              </div>
+
+              <!-- Orders Tab -->
+              <div class="tab-pane fade" id="orders-tab">
+                <div class="content-box">
+                  <h4 class="mb-4">Đơn Hàng Của Tôi</h4>
+
+                  <!-- Filter -->
+                  <div class="mb-4">
+                    <select
+                      class="form-control"
+                      id="orderStatusFilter"
+                      style="max-width: 250px"
+                    >
+                      <option value="">Tất cả trạng thái</option>
+                      <option value="pending">Chờ xác nhận</option>
+                      <option value="confirmed">Đã xác nhận</option>
+                      <option value="processing">Đang xử lý</option>
+                      <option value="shipping">Đang giao</option>
+                      <option value="delivered">Đã giao</option>
+                      <option value="cancelled">Đã hủy</option>
+                    </select>
+                  </div>
+
+                  <div id="ordersContainer">
+                    <!-- Orders will be rendered here -->
+                  </div>
+
+                  <!-- Pagination -->
+                  <div id="ordersPagination" class="text-center mt-4"></div>
+                </div>
+              </div>
+
+              <!-- Password Tab -->
+              <div class="tab-pane fade" id="password-tab">
+                <div class="content-box">
+                  <h4 class="mb-4">Đổi Mật Khẩu</h4>
+
+                  <form id="passwordForm">
+                    <div class="mb-3">
+                      <label class="form-label">Mật Khẩu Hiện Tại</label>
+                      <div class="password-wrapper">
+                        <input
+                          type="password"
+                          class="form-control"
+                          id="currentPassword"
+                          name="current_password"
+                          required
+                        />
+                        <span
+                          class="toggle-password"
+                          data-target="#currentPassword"
+                        >
+                          <i class="fa fa-eye-slash"></i>
+                        </span>
+                      </div>
+                    </div>
+
+                    <div class="mb-3">
+                      <label class="form-label">Mật Khẩu Mới</label>
+                      <div class="password-wrapper">
+                        <input
+                          type="password"
+                          class="form-control"
+                          id="newPassword"
+                          name="new_password"
+                          required
+                          minlength="6"
+                        />
+                        <span
+                          class="toggle-password"
+                          data-target="#newPassword"
+                        >
+                          <i class="fa fa-eye-slash"></i>
+                        </span>
+                      </div>
+                    </div>
+
+                    <div class="mb-3">
+                      <label class="form-label">Xác Nhận Mật Khẩu Mới</label>
+                      <div class="password-wrapper">
+                        <input
+                          type="password"
+                          class="form-control"
+                          id="confirmPassword"
+                          name="confirm_password"
+                          required
+                          minlength="6"
+                        />
+                        <span
+                          class="toggle-password"
+                          data-target="#confirmPassword"
+                        >
+                          <i class="fa fa-eye-slash"></i>
+                        </span>
+                      </div>
+                    </div>
+
+                    <button type="submit" class="btn-save">Đổi Mật Khẩu</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ORDER DETAIL MODAL -->
+    <div id="orderDetailModal" class="modal-backdrop">
+      <div class="custom-modal">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalOrderNumber">#Loading...</h5>
+          <button type="button" class="close-modal" onclick="closeOrderModal()">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body" id="modalOrderContent">
+          <!-- Nội dung chi tiết đơn hàng sẽ được AJAX load vào đây -->
+          <div class="text-center py-5">
+            <div class="spinner-border text-dark" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <%- include('../partials/user/Footer') %> <%-
+    include('../partials/user/Script') %>
+
+    <script src="/js/my_info.js"></script>
+  </body>
+</html>

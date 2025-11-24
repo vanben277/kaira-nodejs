@@ -321,7 +321,63 @@ class CheckoutController {
             res.status(500).render('errors/500');
         }
     }
-    // [GET] /admin/detail/:id
+
+    // [GET] /orders/by-user/:id
+    async getOrdersByUser(req, res) {
+        try {
+            const userId = req.params.id;
+            const sessionUserId = req.session.userId;
+            const userRole = req.session.role;
+
+            if (userRole !== 'ADMIN' && sessionUserId !== userId) {
+                return res.status(403).json({
+                    success: false,
+                    message: 'Bạn không có quyền xem đơn hàng này'
+                });
+            }
+
+            const page = parseInt(req.query.page) || 1;
+            const limit = parseInt(req.query.limit) || 10;
+            const skip = (page - 1) * limit;
+
+            const status = req.query.status;
+            let query = { user_id: userId };
+
+            if (status && ['pending', 'confirmed', 'processing', 'shipping', 'delivered', 'cancelled'].includes(status)) {
+                query.status = status;
+            }
+
+            const total = await Order.countDocuments(query);
+
+            const orders = await Order.find(query)
+                .sort({ ordered_at: -1 })
+                .skip(skip)
+                .limit(limit)
+                .lean();
+
+            return res.status(200).json({
+                success: true,
+                data: orders,
+                pagination: {
+                    current_page: page,
+                    total_pages: Math.ceil(total / limit),
+                    total_items: total,
+                    per_page: limit
+                }
+            });
+
+        } catch (err) {
+            console.error('Error getting orders by user:', err);
+
+            return res.status(500).json({
+                success: false,
+                message: "Không thể lấy danh sách đơn hàng",
+                error: err.message
+            });
+        }
+    }
+
+    // [GET] /admin/orders/detail/:id
     async getDetailPopup(req, res) {
         try {
             const order = await Order.findById(req.params.id).lean();
@@ -332,7 +388,7 @@ class CheckoutController {
         }
     }
 
-    // [POST] /admin/update-status
+    // [POST] /admin/orders/update-status
     async updateStatus(req, res) {
         try {
             const { orderId, status, payment_status } = req.body;

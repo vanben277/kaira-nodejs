@@ -3,7 +3,10 @@ const router = express.Router();
 const CategoriesController = require('../controllers/CategoriesController');
 const ProductsController = require('../controllers/ProductsController');
 const CheckoutController = require('../controllers/OrderController');
-const authMiddleware = require('../middleware/auth');
+const AccountController = require('../controllers/AccountController');
+const OrderController = require('../controllers/OrderController');
+const accountUpload = require('../config/multerAccounts');
+const { isAuthenticated, isAdminOrCustomer } = require('../middleware/auth');
 
 router.get('/', (req, res) => {
     res.render('user/HomePage');
@@ -32,11 +35,11 @@ router.get('/cart', (req, res) => {
 });
 
 // Checkout
-router.get('/checkout', authMiddleware.isAuthenticated, CheckoutController.showCheckoutPage);
-router.post('/checkout/create-order', authMiddleware.isAuthenticated, CheckoutController.createOrder);
-router.get('/order-success/:orderId', authMiddleware.isAuthenticated, CheckoutController.orderSuccess);
-router.get('/order/:id/status', authMiddleware.isAuthenticated, CheckoutController.getOrderStatus);
-router.get('/order-tracking/:orderNumber', authMiddleware.isAuthenticated, CheckoutController.trackOrder);
+router.get('/checkout', isAuthenticated, CheckoutController.showCheckoutPage);
+router.post('/checkout/create-order', isAuthenticated, CheckoutController.createOrder);
+router.get('/order-success/:orderId', isAuthenticated, CheckoutController.orderSuccess);
+router.get('/order/:id/status', isAuthenticated, CheckoutController.getOrderStatus);
+router.get('/order-tracking/:orderNumber', isAuthenticated, CheckoutController.trackOrder);
 
 router.get('/category/:slug', (req, res) => {
     res.render('user/Containers', {
@@ -53,5 +56,20 @@ router.get('/containers', (req, res) => {
 router.get('/wishlist', (req, res) => {
     res.render('user/WishList');
 });
+
+router.get('/orders/by-user/:id', isAdminOrCustomer, OrderController.getOrdersByUser);
+router.get('/orders/detail/:id', OrderController.getDetailPopup);
+
+router.get('/accounts/profile', isAuthenticated, (req, res) => {
+    res.render('user/MyInfo');
+});
+
+router.get('/accounts/me', isAuthenticated, AccountController.getMyAccount);
+
+router.put('/accounts/update-profile', isAuthenticated, accountUpload.single('avatar'), AccountController.updateProfile);
+
+router.put('/accounts/change-password', isAuthenticated, AccountController.changePassword);
+
+router.get('/accounts/:id', isAdminOrCustomer, AccountController.getAccountById);
 
 module.exports = router;
